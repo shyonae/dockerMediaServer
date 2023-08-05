@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   yacht:
+    command: -H tcp://dockerproxy:2375
     container_name: yacht
     image: selfhostedpro/yacht
     environment:
