@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr:1.5.0
     container_name: jellyseerr
     environment:
       PGID: ${PGID}
