@@ -5,6 +5,8 @@ services:
     container_name: swag
     cap_add:
       - NET_ADMIN
+    depends_on:
+      - dockerproxy
     environment:
       PGID: ${PGID}
       PUID: ${PUID}
@@ -29,6 +31,8 @@ services:
       FILE__CF_TUNNEL_CONFIG: /config/tunnelconfig.yml
     networks:
       - shyDockerServer
+    ports:
+      - 443:443
     extra_hosts:
       - ${SWAG_EXTRA_HOSTS}
     volumes:
