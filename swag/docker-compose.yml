@@ -19,7 +19,7 @@ services:
       STAGING: false
       PROPAGATION: 30
       EMAIL: ${SWAG_EMAIL}
-      DOCKER_MODS: linuxserver/mods:universal-docker|linuxserver/mods:swag-auto-proxy|linuxserver/mods:universal-cloudflared|linuxserver/mods:swag-crowdsec
+      DOCKER_MODS: linuxserver/mods:universal-docker|linuxserver/mods:swag-auto-proxy|linuxserver/mods:universal-cloudflared|linuxserver/mods:swag-crowdsec|linuxserver/mods:swag-auto-reload
       CROWDSEC_API_KEY: ${SWAG_CROWDSEC_API_KEY}
       CROWDSEC_LAPI_URL: http://crowdsec:8080
       DOCKER_HOST: dockerproxy
