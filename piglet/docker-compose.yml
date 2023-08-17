@@ -13,8 +13,8 @@ services:
       - shyDockerServer
     environment:
       DB_ROOT_PASSWORD: ${PIGLET_DB_ROOT_PASSWORD}
-      #MYSQL_DATABASE: ${MYSQL_DATABASE} # Default 'piglet'
-      #MYSQL_USER: ${MYSQL_USER} # Default 'piglet'
+      MYSQL_DATABASE: piglet-db
+      MYSQL_USER: ${PIGLET_MYSQL_USER} 
       #MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       #MYSQL_HOST: ${MYSQL_HOST}
       #MAIL_SERVER: ${MAIL_SERVER}
@@ -23,7 +23,6 @@ services:
       #MAIL_PORT: ${MAIL_PORT}
       #MAIL_ENCRYPTIONPROTOCOL: ${MAIL_ENCRYPTIONPROTOCOL}
       #DOMAIN: ${DOMAIN} # Default 'localhost'
-      #DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       #SECURE_COOKIE: ${SECURE_COOKIE}
     volumes:
       - "/etc/timezone:/etc/timezone:ro"
