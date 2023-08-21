@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  piglet:
+    restart: unless-stopped
+    container_name: piglet
+    depends_on:
+      - database
+    ports:
+      - 8089:80
+      - 8087:8080
+    image: k3nd0x/piglet:latest
+    networks:
+      - shyDockerServer
+    environment:
+      DB_ROOT_PASSWORD: ${PIGLET_DB_ROOT_PASSWORD}
+      #MYSQL_DATABASE: ${MYSQL_DATABASE} # Default 'piglet'
+      #MYSQL_USER: ${MYSQL_USER} # Default 'piglet'
+      #MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      #MYSQL_HOST: ${MYSQL_HOST}
+      #MAIL_SERVER: ${MAIL_SERVER}
+      #MAIL_USER: ${MAIL_USER}
+      #MAIL_PASSWORD: ${MAIL_PASSWORD}
+      #MAIL_PORT: ${MAIL_PORT}
+      #MAIL_ENCRYPTIONPROTOCOL: ${MAIL_ENCRYPTIONPROTOCOL}
+      #DOMAIN: ${DOMAIN} # Default 'localhost'
+      #SECURE_COOKIE: ${SECURE_COOKIE}
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - swag=enable
+      - swag_auth=authelia
+  database:
+    image: mariadb:latest
+    container_name: piglet-db
+    volumes:
+      - ${DOCKERCONFDIR}/piglet/mysql:/var/lib/mysql
+    networks:
+      - shyDockerServer
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PIGLET_DB_ROOT_PASSWORD}
+
+networks:
+  shyDockerServer:
+    driver: bridge
+    external: true
