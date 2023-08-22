@@ -50,4 +50,4 @@ services:
 networks:
   shyDockerServer:
     driver: bridge
-    external: true
+    

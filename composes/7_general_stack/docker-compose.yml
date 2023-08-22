@@ -31,4 +31,3 @@ services:
 networks:
   generalStackNetwork:
     driver: bridge
-    external: true

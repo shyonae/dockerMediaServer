@@ -5,7 +5,6 @@ x-default-conf: &default_conf
   networks:
     - arrStackNetwork
     - jellyStackNetwork
-    - swagStackNetwork
 
 x-authelia-conf: &authelia
   labels:
@@ -45,13 +44,7 @@ services:
       - ${DOCKERCONFDIR}/jellyseerr:/app/config
 
 networks:
-  networks:
   jellyStackNetwork:
     driver: bridge
-    external: true
-  swagStackNetwork:
-    driver: bridge
-    external: true
   arrStackNetwork:
     driver: bridge
-    external: true
