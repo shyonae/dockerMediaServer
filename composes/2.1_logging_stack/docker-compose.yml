@@ -1,0 +1,97 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - loggingStackNetwork
+
+x-authelia-conf: &authelia
+  labels:
+    - swag=enable
+    - swag_auth=authelia
+
+x-environment: &environment
+  PGID: ${PGID}
+  PUID: ${PUID}
+  TZ: ${TZ}
+
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    user: "${PUID}:${PGID}"
+    environment:
+      <<: *environment
+    <<: [*default_conf, *authelia]
+    volumes:
+      - ${DOCKERCONFDIR}/grafana:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:2.8.0
+    container_name: grafana-loki
+    environment:
+      <<: *environment
+    <<: *default_conf
+    ports:
+      - "3100:3100"
+    volumes:
+      - ${DOCKERCONFDIR}/grafana/loki:/etc/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.8.0
+    container_name: grafana-promtail
+    environment:
+      <<: *environment
+    <<: *default_conf
+    volumes:
+      - /var/log:/var/log
+      - ${DOCKERCONFDIR}/grafana/promtail:/etc/promtail
+    command: -config.file=/etc/promtail/config.yml
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    user: "${PUID}:${PGID}"
+    environment:
+      <<: *environment
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/prometheus/config:/etc/prometheus
+      - ${DOCKERCONFDIR}/prometheus/data:/prometheus
+    command: "--config.file=/etc/prometheus//prometheus.yml"
+    depends_on:
+      - cadvisor
+      - node_exporter
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    <<: *default_conf
+    command:
+      - "--path.rootfs=/host"
+    pid: host
+    volumes:
+      - "/:/host:ro,rslave"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    <<: *default_conf
+    ports:
+      - 8081:8080
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+networks:
+  loggingStackNetwork:
+    driver: bridge
+    external: true
