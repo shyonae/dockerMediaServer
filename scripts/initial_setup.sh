@@ -51,6 +51,7 @@ docker network create -d bridge downloadStackNetwork
 docker network create -d bridge arrStackNetwork
 docker network create -d bridge jellyStackNetwork
 docker network create -d bridge generalStackNetwork
+docker network create -d bridge vaultNetwork
 
 ### GRAFANA LOKI DOCKER PLUGIN INSTALL ###
 docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions

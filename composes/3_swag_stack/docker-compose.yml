@@ -55,6 +55,7 @@ services:
       - downloadStackNetwork
       - generalStackNetwork
       - socketProxyNetwork
+      - vaultNetwork
     ports:
       - 443:443
     volumes:
@@ -106,5 +107,8 @@ networks:
     driver: bridge
     external: true
   socketProxyNetwork:
+    driver: bridge
+    external: true
+  vaultNetwork:
     driver: bridge
     external: true

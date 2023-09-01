@@ -1,0 +1,42 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - vaultNetwork
+
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      DATABASE_URL: ${VAULTWARDEN_DB_URL}
+      SIGNUPS_ALLOWED: true
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/vaultwarden/data/:/data/
+    labels:
+      - swag=enable
+      - swag_auth=authelia
+    ports:
+      - 8623:80
+
+  vaultwarden_db:
+    image: postgres:15-alpine
+    container_name: vaultwarden_db
+    environment:
+      TZ: ${TZ}
+      POSTGRES_PASSWORD: ${VAULTWARDEN_DB_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: vaultwarden_db
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/vaultwarden/postgres_storage:/var/lib/postgresql/data
+
+networks:
+  vaultNetwork:
+    driver: bridge
+    external: true
