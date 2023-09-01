@@ -35,6 +35,8 @@ services:
   headscale_ui:
     image: ghcr.io/gurucomputing/headscale-ui:latest
     container_name: headscale_ui
+    ports:
+      - 9443:443
     <<: *default_conf
 
 networks:
