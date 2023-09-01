@@ -21,9 +21,9 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 6767:6767
+    <<: [*default_conf, *authelia]
+    #ports:
+    #  - 6767:6767
     volumes:
       - ${DOCKERCONFDIR}/bazarr:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -31,11 +31,9 @@ services:
   bazarranime:
     container_name: bazarranime
     image: lscr.io/linuxserver/bazarr:latest
-    ports:
-      - 6768:6767
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
+    <<: [*default_conf, *authelia]
     volumes:
       - ${DOCKERCONFDIR}/bazarranime:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -45,9 +43,9 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 7878:7878
+    <<: [*default_conf, *authelia]
+    #ports:
+    #  - 7878:7878
     volumes:
       - ${DOCKERCONFDIR}/radarr:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -57,9 +55,7 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 7879:7878
+    <<: [*default_conf, *authelia]
     volumes:
       - ${DOCKERCONFDIR}/radarranime:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -69,9 +65,9 @@ services:
     image: lscr.io/linuxserver/sonarr:develop
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 8989:8989
+    <<: [*default_conf, *authelia]
+    #ports:
+    #  - 8989:8989
     volumes:
       - ${DOCKERCONFDIR}/sonarr:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -81,9 +77,7 @@ services:
     image: lscr.io/linuxserver/sonarr:develop
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 8990:8989
+    <<: [*default_conf, *authelia]
     volumes:
       - ${DOCKERCONFDIR}/sonarranime:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -97,8 +91,8 @@ services:
       LOG_LEVEL: info
       <<: *environment
     <<: *default_conf
-    ports:
-      - 8191:8191
+    #ports:
+    #  - 8191:8191
 
   notifiarr:
     container_name: notifiarr
@@ -106,9 +100,9 @@ services:
     image: golift/notifiarr
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 5454:5454
+    <<: [*default_conf, *authelia]
+    #ports:
+    #  - 5454:5454
     volumes:
       - ${DOCKERCONFDIR}/notifiarr:/config
       - /var/run/utmp:/var/run/utmp
@@ -119,9 +113,9 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     environment:
       <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 9696:9696
+    <<: [*default_conf, *authelia]
+    #ports:
+    #  - 9696:9696
     volumes:
       - ${DOCKERCONFDIR}/prowlarr:/config
 
