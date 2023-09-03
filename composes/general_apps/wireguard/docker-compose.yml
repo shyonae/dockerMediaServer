@@ -12,7 +12,8 @@ services:
       TZ: ${TZ}
       SERVERURL: auto
       SERVERPORT: 51820
-      PEERS: peer1,peer2
+      PEERS: peer1test
+      PEERDNS: auto
     volumes:
       - ${DOCKERCONFDIR}/wireguard:/config
       - /lib/modules:/lib/modules
@@ -22,10 +23,9 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
     networks:
-      - shyDockerServer
+      - generalStackNetwork
 
 networks:
-  shyDockerServer:
+  generalStackNetwork:
     driver: bridge
     external: true
-    
