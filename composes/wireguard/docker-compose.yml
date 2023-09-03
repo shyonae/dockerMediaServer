@@ -16,8 +16,10 @@ services:
       PEERDNS: auto
     volumes:
       - ${DOCKERCONFDIR}/wireguard:/config
+      - ${DOCKERCONFDIR}/wireguard/etc/wireguard:/etc/wireguard
       - /lib/modules:/lib/modules
     ports:
+      - 5000:5000
       - 51820:51820/udp
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
@@ -29,6 +31,29 @@ services:
       - downloadStackNetwork
       - generalStackNetwork
       - socketProxyNetwork
+
+  wireguard-ui:
+    build: .
+    image: ngoduykhanh/wireguard-ui:latest
+    container_name: wgui
+    depends_on:
+      - wireguard
+    cap_add:
+      - NET_ADMIN
+    environment:
+      SESSION_SECRET: ${WGUI_SESSION_SECRET}
+      WGUI_USERNAME: shyonae
+      WGUI_PASSWORD: ${WGUI_PASSWORD}
+      #WG_CONF_TEMPLATE: "/etc/wireguard/wg0.conf"
+      WGUI_MANAGE_START: false
+      WGUI_MANAGE_RESTART: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    volumes:
+      - ${DOCKERCONFDIR}/wireguard-ui/db:/app/db
+      - ${DOCKERCONFDIR}/wireguard/etc/wireguard:/etc/wireguard
 
 networks:
   swagStackNetwork:
