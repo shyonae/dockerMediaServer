@@ -39,7 +39,11 @@ services:
       - wireguard
     cap_add:
       - NET_ADMIN
+    user: "${PUID}:${PGID}"
     environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
       SESSION_SECRET: ${WGUI_SESSION_SECRET}
       WGUI_USERNAME: shyonae
       WGUI_PASSWORD: ${WGUI_PASSWORD}
@@ -53,6 +57,8 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/wireguard-ui/db:/app/db
       - ${DOCKERCONFDIR}/wireguard/etc/wireguard:/etc/wireguard
+    networks:
+      - generalStackNetwork
 
 networks:
   swagStackNetwork:
