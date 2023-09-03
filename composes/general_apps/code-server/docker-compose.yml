@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      DEFAULT_WORKSPACE: /config/workspace
+    restart: unless-stopped
+    networks:
+      - generalStackNetwork
+    labels:
+      - swag=enable
+      - swag_auth=authelia
+    volumes:
+      - ${DOCKERCONFDIR}/code-server:/config
+    ports:
+      - 8443:8443
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

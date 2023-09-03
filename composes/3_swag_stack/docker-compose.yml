@@ -11,6 +11,17 @@ x-environment: &environment
   TZ: ${TZ}
 
 services:
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    environment:
+      <<: *environment
+    <<: *default_conf
+    ports:
+      - 9091:9091
+    volumes:
+      - ${DOCKERCONFDIR}/authelia:/config
+
   swag:
     image: lscr.io/linuxserver/swag:latest
     container_name: swag
@@ -44,6 +55,8 @@ services:
       - downloadStackNetwork
       - generalStackNetwork
       - socketProxyNetwork
+      - vaultNetwork
+      - headscaleNetwork
     ports:
       - 443:443
     volumes:
@@ -78,17 +91,6 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/cloudflare-ddns/config.json:/config.json
 
-  authelia:
-    image: authelia/authelia
-    container_name: authelia
-    environment:
-      <<: *environment
-    <<: *default_conf
-    ports:
-      - 9091:9091
-    volumes:
-      - ${DOCKERCONFDIR}/authelia:/config
-
 networks:
   swagStackNetwork:
     driver: bridge
@@ -106,5 +108,11 @@ networks:
     driver: bridge
     external: true
   socketProxyNetwork:
+    driver: bridge
+    external: true
+  vaultNetwork:
+    driver: bridge
+    external: true
+  headscaleNetwork:
     driver: bridge
     external: true

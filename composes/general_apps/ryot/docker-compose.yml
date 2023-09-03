@@ -1,0 +1,38 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - generalStackNetwork
+
+services:
+  ryot:
+    image: "ghcr.io/ignisda/ryot:latest"
+    container_name: ryot
+    user: "${PUID}:${PGID}"
+    environment:
+      TZ: ${TZ}
+    <<: *default_conf
+    depends_on:
+      - ryot_postgres_db
+    volumes:
+      - ${DOCKERCONFDIR}/ryot:/data
+    ports:
+      - "8192:8000"
+
+  ryot_postgres_db:
+    image: postgres:15-alpine
+    container_name: ryot_postgres_db
+    environment:
+      TZ: ${TZ}
+      POSTGRES_PASSWORD: ${RYOT_DB_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/ryot/postgres_storage:/var/lib/postgresql/data 
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

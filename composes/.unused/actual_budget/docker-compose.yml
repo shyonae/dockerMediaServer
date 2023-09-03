@@ -1,0 +1,21 @@
+version: '3'
+services:
+  actual_budget:
+    image: actualbudget/actual-server:latest
+    container_name: actual_budget
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+    volumes:
+      - ${DOCKERCONFDIR}/actual-budget:/data
+    restart: unless-stopped
+    ports:
+      - '5006:5006'
+    networks:
+      - generalStackNetwork
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

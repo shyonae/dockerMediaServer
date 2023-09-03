@@ -1,0 +1,56 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - generalStackNetwork
+
+services:
+  db_recipes:
+    image: postgres:15-alpine
+    hostname: recipes_postgres_db
+    container_name: recipes_postgres_db
+    environment:
+      POSTGRES_PASSWORD: ${RECIPES_DB_PASSWORD}
+      POSTGRES_USER: djangouser
+      POSTGRES_DB: recipes_postgres_db
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/recipes/postgresql:/var/lib/postgresql/data
+
+  web_recipes:
+    image: vabene1111/recipes
+    container_name: recipes
+    environment:
+      DEBUG: 0
+      SQL_DEBUG: 0
+      DEBUG_TOOLBAR: 0
+      ALLOWED_HOSTS: '*'
+      SECRET_KEY: ${RECIPES_SECRET_KEY}
+      TIMEZONE: Europe/Rome
+      DB_ENGINE: django.db.backends.postgresql
+      POSTGRES_HOST: recipes_postgres_db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: djangouser
+      POSTGRES_PASSWORD: ${RECIPES_DB_PASSWORD}
+      POSTGRES_DB: recipes_postgres_db
+      # DATABASE_URL :  engine://username:password@host:port/dbname
+      FRACTION_PREF_DEFAULT: 0
+      COMMENT_PREF_DEFAULT: 1
+      SHOPPING_MIN_AUTOSYNC_INTERVAL: 5
+      GUNICORN_MEDIA: 0
+      REMOTE_USER_AUTH: 0
+    <<: *default_conf
+    labels:
+      - swag=enable
+      - swag_auth=authelia
+    volumes:
+      - ${DOCKERCONFDIR}/recipes/staticfiles:/opt/recipes/staticfiles
+      - ${DOCKERCONFDIR}/recipes/mediafiles:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

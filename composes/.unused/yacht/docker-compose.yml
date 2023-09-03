@@ -1,0 +1,11 @@
+yacht:
+    command: -H tcp://dockerproxy:2375
+    container_name: yacht
+    image: selfhostedpro/yacht
+    environment:
+      <<: *environment
+    <<: [ *default_conf, *authelia ]
+    ports:
+      - 8000:8000
+    volumes:
+      - ${DOCKERCONFDIR}/yacht:/config

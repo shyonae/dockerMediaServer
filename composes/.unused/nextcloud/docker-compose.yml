@@ -1,0 +1,39 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - generalStackNetwork
+
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+    volumes:
+      - ${DOCKERCONFDIR}/nextcloud/appdata:/config
+      - ${DOCKERCONFDIR}/nextcloud/config:/data
+    <<: *default_conf
+    labels:
+      - swag=enable
+      - swag_auth=authelia
+
+  nextcloud_postgres_db:
+    image: postgres
+    container_name: nextcloud_postgres_db
+    environment:
+      TZ: ${TZ}
+      POSTGRES_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: nextcloud_postgres_db
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/nextcloud/postgres_storage:/var/lib/postgresql/data 
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

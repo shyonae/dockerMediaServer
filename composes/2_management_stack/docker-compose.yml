@@ -18,18 +18,6 @@ x-environment: &environment
   DOCKER_HOST: dockerproxy
 
 services:
-  yacht:
-    command: -H tcp://dockerproxy:2375
-    container_name: yacht
-    image: selfhostedpro/yacht
-    environment:
-      <<: *environment
-    <<: [ *default_conf, *authelia ]
-    ports:
-      - 8000:8000
-    volumes:
-      - ${DOCKERCONFDIR}/yacht:/config
-
   portainer:
     command: -H tcp://dockerproxy:2375
     container_name: portainer
@@ -64,6 +52,17 @@ services:
       - ${DOCKERCONFDIR}/homarr/icons:/app/public/icons
     ports:
       - 7575:7575
+
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    container_name: uptime-kuma
+    environment:
+      <<: *environment
+    <<: [ *default_conf, *authelia ]
+    volumes:
+      - ${DOCKERCONFDIR}/uptime-kuma:/app/data
+    ports:
+      - 3001:3001
 
 networks:
   managementStackNetwork:
