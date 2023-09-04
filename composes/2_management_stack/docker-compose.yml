@@ -8,7 +8,7 @@ x-default-conf: &default_conf
 
 x-authelia-conf: &authelia
   labels:
-- swag=enable
+  - swag=enable
   - swag_auth=authelia
 
 x-environment: &environment
