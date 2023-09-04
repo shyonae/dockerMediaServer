@@ -8,8 +8,8 @@ x-default-conf: &default_conf
 
 x-authelia-conf: &authelia
   labels:
-    - swag=enable
-    - swag_auth=authelia
+  - swag=enable
+  - swag_auth=authelia
 
 x-environment: &environment
   PGID: ${PGID}
@@ -63,6 +63,15 @@ services:
       - ${DOCKERCONFDIR}/uptime-kuma:/app/data
     ports:
       - 3001:3001
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    environment:
+      <<: *environment
+    <<: [ *default_conf, *authelia ]
+    #ports:
+    #  - 9999:8080
 
 networks:
   managementStackNetwork:
