@@ -22,8 +22,6 @@ services:
     container_name: homechart_db
     environment:
       POSTGRES_PASSWORD: ${HOMECHART_DB_PASSWORD}
-      POSTGRES_USER: postgres
-      POSTGRES_DB: homechart_db
     <<: *default_conf
     volumes:
       - ${DOCKERCONFDIR}/homechart/db_data:/var/lib/postgresql/data
