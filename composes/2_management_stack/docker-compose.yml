@@ -73,6 +73,22 @@ services:
     #ports:
     #  - 9999:8080
 
+  duplicacy:
+    container_name: duplicacy
+    hostname: duplicacy
+    image: ghcr.io/hotio/duplicacy
+    environment:
+      UMASK: ${UMASK}
+      <<: *environment
+    <<: [ *default_conf, *authelia ]
+    volumes:
+      - ${DOCKERCONFDIR}/duplicacy/config:/config
+      - ${DOCKERCONFDIR}/duplicacy/cache:/cache
+      - ${DOCKERCONFDIR}/duplicacy/logs:/logs
+      - ${DOCKERCONFDIR}:/storage
+    # ports:
+    #   - "3875:3875"
+
 networks:
   managementStackNetwork:
     driver: bridge
