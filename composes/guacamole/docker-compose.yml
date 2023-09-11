@@ -45,7 +45,7 @@ services:
     environment:
       <<: *environment
       MYSQL_ROOT_PASSWORD: ${GUACAMOLE_DB_PASSWORD}
-      MYSQL_DATABASE: guacamoledb
+      MYSQL_DATABASE: guacamole_db
       MYSQL_USER: guacamole
       MYSQL_PASSWORD: ${GUACAMOLE_DB_PASSWORD}
     <<: *default_conf
