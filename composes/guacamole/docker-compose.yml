@@ -18,7 +18,7 @@ services:
     # ports 4822
 
   guacamole:
-    container_name: guacamole_compose
+    container_name: guacamole
     image: guacamole/guacamole
     depends_on:
       - guacd
