@@ -1,16 +1,12 @@
 # IMPORTANT
-- linuxserver / bookstack
 - fix ryot webhook not working with jellyfin
-- setup gitea
 - fix authelia config file: https://docs.ibracorp.io/authelia_archived/configuration-files/authelia-config-file
 - use redis with authelia
 - ntfy.sh
-- duplicacy
 - scrutiny
 - homepage
 
 # LESS IMPORTANT
-- find a good backup solution
 - buy new hard drive to use for nextcloud + check why authelia doesn't work with it
 - some more containers from here `https://www.reddit.com/media?url=https%3A%2F%2Fi.redd.it%2Fgot-inspired-from-another-post-i-present-my-current-setup-v0-c3h3ai0daokb1.png%3Fs%3D998d57fd301e5d5e6d6a865e86df9c9b5ef9a6d7`
 - check `https://www.reddit.com/r/selfhosted/comments/zwcns3/most_used_selfhosted_services_in_2022/`
