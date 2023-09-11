@@ -32,13 +32,15 @@ services:
       - ${DOCKERCONFDIR}/portainer:/data
       - ${DOCKERSTORAGEDIR}:/storage
 
-  whatsupdocker:
-    image: fmartinou/whats-up-docker
-    container_name: whatsupdocker
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
     environment:
-      WUD_WATCHER_LOCAL_SOCKET: tcp://dockerproxy:2375
-      TZ: ${TZ}
-    <<: [ *default_conf, *authelia ]
+      <<: *environment
+      DOCKER_HOST: "tcp://dockerproxy:2375"
+      WATCHTOWER_SCHEDULE: "0 0 03 * * *"
+      WATCHTOWER_CLEANUP: "true"
+    <<: *default_conf
 
   homarr:
     container_name: homarr
