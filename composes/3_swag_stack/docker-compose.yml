@@ -97,7 +97,7 @@ services:
     container_name: duckdns
     environment:
       <<: *environment
-      SUBDOMAINS: ${DUCKDNS_SUBDOMAIN}
+      SUBDOMAINS: ${DUBKDNS_SUBDOMAIN}
       TOKEN: ${DUCKDNS_TOKEN}
     <<: *default_conf
 
@@ -123,12 +123,20 @@ services:
       WG_HOST: ${DUCKDNS_SUBDOMAIN}
       PASSWORD: ${WGEASY_PASSWORD}
       WG_DEFAULT_DNS: 1.1.1.1, 8.8.8.8, 8.8.4.4
-    <<: *default_conf
+    networks:
+      - swagStackNetwork
+      - managementStackNetwork
+      - arrStackNetwork
+      - downloadStackNetwork
+      - generalStackNetwork
+      - socketProxyNetwork
+      - guacamoleStackNetwork
     volumes:
       - ${DOCKERCONFDIR}/wg-easy:/etc/wireguard
-    # ports:
-    #   - "51820:51820/udp"
-    #   - "51821:51821/tcp"
+    restart: unless-stopped
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
