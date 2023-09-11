@@ -92,6 +92,15 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/cloudflare-ddns/config.json:/config.json
 
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      <<: *environment
+      SUBDOMAINS: ${DUBKDNS_SUBDOMAIN}
+      TOKEN: ${DUCKDNS_TOKEN}
+    <<: *default_conf
+
 networks:
   swagStackNetwork:
     driver: bridge
