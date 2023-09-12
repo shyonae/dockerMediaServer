@@ -108,6 +108,9 @@ services:
       - NET_ADMIN
     environment:
       <<: *environment
+      DOCKER_MODS: linuxserver/mods:universal-docker|linuxserver/mods:swag-crowdsec
+      CROWDSEC_API_KEY: ${SWAG_CROWDSEC_API_KEY}
+      CROWDSEC_LAPI_URL: http://crowdsec:8080
       URL: ${DUCKDNS_SUBDOMAIN}
       SUBDOMAINS: wildcard
       VALIDATION: duckdns
@@ -143,6 +146,33 @@ services:
     sysctls:
       - net.ipv4.ip_forward=1
       - net.ipv4.conf.all.src_valid_mark=1
+
+  wgui:
+    image: ngoduykhanh/wireguard-ui:latest
+    container_name: wgui
+    user: "${PUID}:${PGID}"
+    cap_add:
+      - NET_ADMIN
+    environment:
+      SESSION_SECRET: ${WGEASY_PASSWORD}
+      WGUI_USERNAME: shyonae
+      WGUI_PASSWORD: test
+      WGUI_ENDPOINT_ADDRESS: ${DUCKDNS_SUBDOMAIN}
+      WG_CONF_TEMPLATE: /etc/wireguard/wg0_custom.conf
+      WGUI_MANAGE_START: false
+      WGUI_MANAGE_RESTART: false
+    volumes:
+      - ${DOCKERCONFDIR}/wgui/db:/app/db
+      - ${DOCKERCONFDIR}/wgui/etc/wireguard:/etc/wireguard
+    restart: unless-stopped
+    networks:
+      - swagStackNetwork
+      - managementStackNetwork
+      - arrStackNetwork
+      - downloadStackNetwork
+      - generalStackNetwork
+      - socketProxyNetwork
+      - guacamoleStackNetwork
 
 networks:
   swagStackNetwork:
