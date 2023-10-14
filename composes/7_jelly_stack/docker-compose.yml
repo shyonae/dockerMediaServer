@@ -33,6 +33,7 @@ services:
       - ${DOCKERSTORAGEDIR}/medialibrary/tv:/data/tvshows
       - /usr/local/bin/ffmpeg:/usr/local/bin/ffmpeg
       - /usr/local/bin/ffprobe:/usr/local/bin/ffprobe
+      - /usr/local/bin/rffmpeg:/usr/local/bin/rffmpeg
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
