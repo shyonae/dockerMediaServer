@@ -38,11 +38,12 @@ services:
     image: ghcr.io/obeone/nfs-server:latest
     cap_add:
       - SYS_ADMIN
+      - SYS_MODULE
     environment:
       TZ: ${TZ}
-      # NFS_EXPORT_0: /config/cache           *(rw,sync,no_subtree_check,no_root_squash)
-      # NFS_EXPORT_1: /config/transcodes      *(rw,sync,no_subtree_check,no_root_squash)
-      # NFS_EXPORT_2: /config/data/subtitles  *(rw,sync,no_subtree_check,no_root_squash)
+      NFS_EXPORT_0: /config/cache           *(rw,sync,no_subtree_check,no_root_squash)
+      NFS_EXPORT_1: /config/transcodes      *(rw,sync,no_subtree_check,no_root_squash)
+      NFS_EXPORT_2: /config/data/subtitles  *(rw,sync,no_subtree_check,no_root_squash)
     <<: *default_conf
     ports:
       - 20490:2049
@@ -50,6 +51,7 @@ services:
       - ${DOCKERCONFDIR}/jellyfin/config/cache:/config/cache:z
       - ${DOCKERCONFDIR}/jellyfin/config/data/transcodes:/config/transcodes:z
       - ${DOCKERCONFDIR}/jellyfin/config/data/data/subtitles:/config/data/subtitles:z
+      - /lib/modules:/lib/modules:ro
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
