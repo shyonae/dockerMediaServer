@@ -55,6 +55,8 @@ services:
       - ${DOCKERCONFDIR}/jellyfin/config/data/transcodes:/config/transcodes:z
       - ${DOCKERCONFDIR}/jellyfin/config/data/data/subtitles:/config/data/subtitles:z
       - /lib/modules:/lib/modules:ro
+    security_opt:
+      - apparmor=erichough-nfs
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
