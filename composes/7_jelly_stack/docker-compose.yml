@@ -31,7 +31,8 @@ services:
       - ${DOCKERSTORAGEDIR}/medialibrary/movies:/data/movies
       - ${DOCKERSTORAGEDIR}/medialibrary/tv-anime:/data/anime_tvshows
       - ${DOCKERSTORAGEDIR}/medialibrary/tv:/data/tvshows
-      - ${DOCKERCONFDIR}/jellyfin/rffmpeg.yml:/etc/rffmpeg/rffmpeg.yml
+      - ${DOCKERCONFDIR}/jellyfin/rffmpeg/rffmpeg.yml:/etc/rffmpeg/rffmpeg.yml
+      - ${DOCKERCONFDIR}/jellyfin/rffmpeg/rffmpeg.db:/var/lib/rffmpeg/rffmpeg.db
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
