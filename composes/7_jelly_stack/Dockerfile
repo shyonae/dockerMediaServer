@@ -1,7 +1,9 @@
 FROM lscr.io/linuxserver/jellyfin:latest
 
+COPY ./rffmpeg-go /usr/local/bin/rffmpeg
+
 RUN apt update && apt install -y openssh-client python3-click python3-yaml wget vim nano \ 
-    && wget https://raw.githubusercontent.com/joshuaboniface/rffmpeg/master/rffmpeg -O /usr/local/bin/rffmpeg \
+    # && wget https://raw.githubusercontent.com/joshuaboniface/rffmpeg/master/rffmpeg -O /usr/local/bin/rffmpeg \
     && chmod +x /usr/local/bin/rffmpeg \ 
     && ln /usr/local/bin/rffmpeg /usr/local/bin/ffmpeg \ 
     && ln /usr/local/bin/rffmpeg /usr/local/bin/ffprobe \ 
@@ -9,4 +11,8 @@ RUN apt update && apt install -y openssh-client python3-click python3-yaml wget 
     && mkdir -p /run/shm \
     && mkdir -p /var/lib/rffmpeg
 
-RUN chown -R 1012:1002 /usr/local/bin /var/lib/rffmpeg /var/log/jellyfin /run/shm 
+COPY ./entrypoint.sh /entrypoint.sh
+
+RUN chown -R 1012:1002 /usr/local/bin /var/lib/rffmpeg /var/log/jellyfin /run/shm /etc/rffmpeg
+
+CMD ["/entrypoint.sh"]

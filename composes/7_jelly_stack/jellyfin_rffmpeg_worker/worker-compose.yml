@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  rffmpeg-worker:
+    image: ghcr.io/aleksasiriski/rffmpeg-worker:latest
+    environment:
+      - SSH_USERS=scion:568:568
+    ports:
+      - 22:22
+    volumes:
+      - ./authorized_keys:/etc/authorized_keys/scion:Z
+      - jellyfin-cache:/config/cache
+      - jellyfin-transcodes:/config/transcodes
+      - jellyfin-subtitles:/config/data/subtitles
+    restart: always
+volumes:
+  jellyfin-cache:
+    driver: local
+    driver_opts:
+      type: nfs
+      device: :/config/cache
+      o: addr=192.168.1.7,rw,nfsvers=4,sync,actimeo=1
+  jellyfin-transcodes:
+    driver: local
+    driver_opts:
+      type: nfs
+      device: :/config/transcodes
+      o: addr=192.168.1.7,rw,nfsvers=4,sync,actimeo=1
+  jellyfin-subtitles:
+    driver: local
+    driver_opts:
+      type: nfs
+      device: :/config/data/subtitles
+      o: addr=192.168.1.7,rw,nfsvers=4,sync,actimeo=1

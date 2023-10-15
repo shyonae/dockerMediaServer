@@ -33,6 +33,23 @@ services:
       - ${DOCKERSTORAGEDIR}/medialibrary/tv:/data/tvshows
       - ${DOCKERCONFDIR}/jellyfin/rffmpeg:/etc/rffmpeg
 
+  nfs-server:
+    image: ghcr.io/obeone/nfs-server:latest
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      <<: *environment
+      NFS_EXPORT_0: /config/cache           *(rw,sync,no_subtree_check,no_root_squash)
+      NFS_EXPORT_1: /config/transcodes      *(rw,sync,no_subtree_check,no_root_squash)
+      NFS_EXPORT_2: /config/data/subtitles  *(rw,sync,no_subtree_check,no_root_squash)
+    <<: *default_conf
+    ports:
+      - 2049:2049
+    volumes:
+      - ${DOCKERCONFDIR}/jellyfin/config/cache:/config/cache:z
+      - ${DOCKERCONFDIR}/jellyfin/config/data/transcodes:/config/transcodes:z
+      - ${DOCKERCONFDIR}/jellyfin/config/data/data/subtitles:/config/data/subtitles:z
+
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
