@@ -85,7 +85,7 @@ services:
     container_name: firefly_iii_importer
     environment:
       TZ: ${TZ}
-      FIREFLY_III_URL: "http://firefly_iii_app:8007"
+      FIREFLY_III_URL: "http://192.168.1.7:8007"
       FIREFLY_III_ACCESS_TOKEN: ${FIREFLY3_DATAIMPORTER_ACCESSTOKEN}
       NORDIGEN_ID: ${NORDIGEN_SECRET_ID}
       NORDIGEN_KEY: ${NORDIGEN_SECRET_KEY}
