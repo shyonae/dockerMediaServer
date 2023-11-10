@@ -99,7 +99,6 @@ services:
       <<: *environment
     <<: *default_conf
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
       - ${DOCKERCONFDIR}/cosmos-server:/config
       - ${DOCKERCONFDIR}:/mnt/host/appdata
       - ${DOCKERSTORAGEDIR}:/mnt/host/storage
