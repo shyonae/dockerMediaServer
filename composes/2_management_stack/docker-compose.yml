@@ -107,6 +107,24 @@ services:
       - "4453:443"
       - "4242:4242/udp"
 
+  mongodb:
+    image: mongo
+    container_name: cosmos-db
+    hostname: cosmos-db
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      MONGO_INITDB_ROOT_USERNAME: shyonae
+      MONGO_INITDB_ROOT_PASSWORD: ${COSMOS_MONGO_ROOT_PWD}
+    restart: unless-stopped
+    networks:
+      - managementStackNetwork
+    ports:
+      - "27017:27017"
+    volumes:
+      - ${DOCKERCONFDIR}/cosmos-db:/data/db
+
 networks:
   managementStackNetwork:
     driver: bridge
