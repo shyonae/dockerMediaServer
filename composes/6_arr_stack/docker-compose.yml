@@ -126,7 +126,7 @@ services:
   autobrr:
     container_name: autobrr
     image: ghcr.io/autobrr/autobrr:latest
-    user: "${PGID}:${PUID}"
+    user: ${PUID}:${PGID}
     environment:
       <<: *environment
     <<: *default_conf
@@ -134,6 +134,19 @@ services:
       - ${DOCKERCONFDIR}/autobrr/config:/config
     ports:
       - 7474:7474
+
+  medusa:
+    image: lscr.io/linuxserver/medusa:latest
+    container_name: medusa
+    environment:
+      <<: *environment
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/medusa:/config
+      - ${DOCKERSTORAGEDIR}/downloads/torrents:/downloads
+      - ${DOCKERSTORAGEDIR}/medialibrary:/tv
+    ports:
+      - 8085:8081
 
 networks:
   arrStackNetwork:

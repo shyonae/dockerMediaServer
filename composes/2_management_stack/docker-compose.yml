@@ -91,11 +91,11 @@ services:
       - 8200:8200
 
   cosmos-server:
-    command: -H tcp://dockerproxy:2375
     image: azukaar/cosmos-server:latest
     container_name: cosmos-server
     hostname: cosmos-server
     environment:
+      DOCKER_HOST: tcp://dockerproxy:2375
       <<: *environment
     <<: *default_conf
     volumes:
