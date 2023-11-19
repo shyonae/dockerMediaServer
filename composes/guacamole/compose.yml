@@ -36,8 +36,8 @@ services:
     labels:
       - swag=enable
       - swag_auth=authelia
-    # ports:
-    # - 8080/tcp
+    ports:
+      - 8080:8080
 
   guacamole_db:
     image: lscr.io/linuxserver/mariadb
@@ -50,7 +50,16 @@ services:
       MYSQL_PASSWORD: ${GUACAMOLE_DB_PASSWORD}
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/guacamole/guacamole_db:/config
+      - guacamole_db:/config
+
+volumes:
+  guacamole_db:
+    name: guacamole_db
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/guacamole/guacamole_db
 
 networks:
   guacamoleStackNetwork:

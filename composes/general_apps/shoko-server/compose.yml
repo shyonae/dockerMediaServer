@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  shoko_server:
+    shm_size: 256m
+    container_name: shokoserver
+    image: shokoanime/server:daily
+    restart: unless-stopped
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Rome
+    ports:
+      - "8111:8111"
+    networks:
+      - jellyStackNetwork
+    volumes:
+      - shoko-server:/home/shoko/.shoko
+      - ${DOCKERSTORAGEDIR}/medialibrary:/mnt
+
+volumes:
+  shoko-server:
+    name: shoko-server
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/shoko-server
+
+networks:
+  jellyStackNetwork:
+    driver: bridge
+    external: true

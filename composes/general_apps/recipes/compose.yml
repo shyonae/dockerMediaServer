@@ -22,7 +22,7 @@ services:
       POSTGRES_DB: recipes_postgres_db
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/recipes/postgresql:/var/lib/postgresql/data
+      - recipes_postgresql:/var/lib/postgresql/data
 
   web_recipes:
     image: vabene1111/recipes
@@ -55,6 +55,15 @@ services:
       - ${DOCKERCONFDIR}/recipes/mediafiles:/opt/recipes/mediafiles
     depends_on:
       - db_recipes
+
+volumes:
+  recipes_postgresql:
+    name: recipes_postgresql
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/recipes/postgresql
 
 networks:
   generalStackNetwork:

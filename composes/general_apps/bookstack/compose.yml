@@ -27,7 +27,7 @@ services:
       - swag=enable
       - swag_auth=authelia
     volumes:
-      - ${DOCKERCONFDIR}/bookstack/bookstack_app_data:/config
+      - bookstack_app_data:/config
     depends_on:
       - bookstack_db
 
@@ -42,7 +42,23 @@ services:
       MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD}
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/bookstack/bookstack_db_data:/config
+      - bookstack_db_data:/config
+
+volumes:
+  bookstack_app_data:
+    name: bookstack_app_data
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/bookstack/bookstack_app_data
+  bookstack_db_data:
+    name: bookstack_db_data
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/bookstack/bookstack_db_data
 
 networks:
   generalStackNetwork:

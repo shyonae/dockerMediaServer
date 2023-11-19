@@ -64,7 +64,23 @@ services:
       DUCKDNSTOKEN: ${DUCKDNS_TOKEN}
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/swag_duckdns:/config
+      - swag_duckdns:/config
+
+volumes:
+  swag_duckdns:
+    name: swag_duckdns
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/swag_duckdns
+  wireguard:
+    name: wireguard
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/wireguard
 
 networks:
   swagStackNetwork:

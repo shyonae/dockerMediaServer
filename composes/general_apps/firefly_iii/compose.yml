@@ -61,7 +61,7 @@ services:
     ports:
       - 8007:8080
     volumes:
-      - ${DOCKERCONFDIR}/firefly_iii/firefly_iii_upload/:/var/www/html/storage/upload
+      - firefly_iii:/var/www/html/storage/upload
     depends_on:
       - firefly_iii_db
 
@@ -77,7 +77,7 @@ services:
       MYSQL_DATABASE: "firefly"
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/firefly_iii/firefly_iii_db/:/var/lib/mysql
+      - firefly_iii_db:/var/lib/mysql
 
   firefly_iii_importer:
     image: fireflyiii/data-importer:latest
@@ -115,6 +115,22 @@ services:
       FIREFLY3_APP_KEY: ${FIREFLY3_APP_KEY}
     <<: *default_conf
     command: sh -c "echo \"0 3 * * * wget -qO- http://firefly_iii_app:8085/api/v1/cron/${FIREFLY3_APP_KEY}\" | crontab - && crond -f -L /dev/stdout"
+
+volumes:
+  firefly_iii:
+    name: firefly_iii
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/firefly_iii/firefly_iii_upload
+  firefly_iii_db:
+    name: firefly_iii_db
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/firefly_iii/firefly_iii_db
 
 networks:
   generalStackNetwork:

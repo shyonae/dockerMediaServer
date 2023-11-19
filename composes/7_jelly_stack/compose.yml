@@ -26,11 +26,8 @@ services:
     ports:
       - 8096:8096
     volumes:
-      - ${DOCKERCONFDIR}/jellyfin:/config
-      - ${DOCKERSTORAGEDIR}/medialibrary/movies-anime:/data/anime_movies
-      - ${DOCKERSTORAGEDIR}/medialibrary/movies:/data/movies
-      - ${DOCKERSTORAGEDIR}/medialibrary/tv-anime:/data/anime_tvshows
-      - ${DOCKERSTORAGEDIR}/medialibrary/tv:/data/tvshows
+      - jellyfin:/config
+      - ${DOCKERSTORAGEDIR}/medialibrary:/data
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -41,7 +38,23 @@ services:
     ports:
       - 5055:5055
     volumes:
-      - ${DOCKERCONFDIR}/jellyseerr:/app/config
+      - jellyseerr:/app/config
+
+volumes:
+  jellyfin:
+    name: jellyfin
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/jellyfin
+  jellyseerr:
+    name: jellyseerr
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/jellyseerr
 
 networks:
   jellyStackNetwork:

@@ -16,9 +16,18 @@ services:
       - swag=enable
       - swag_auth=authelia
     volumes:
-      - ${DOCKERCONFDIR}/code-server:/config
+      - code-server:/config
     ports:
       - 8443:8443
+
+volumes:
+  code-server:
+    name: code-server
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/code-server
 
 networks:
   generalStackNetwork:

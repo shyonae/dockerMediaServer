@@ -16,11 +16,20 @@ services:
       - downloadStackNetwork
       - arrStackNetwork
     volumes:
-      - ${DOCKERCONFDIR}/qbittorrent:/config
+      - qbittorrent:/config
       - ${DOCKERSTORAGEDIR}:/storage
     ports:
       - 8080:8080
     restart: unless-stopped
+
+volumes:
+  qbittorrent:
+    name: qbittorrent
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/media/docker-server/appdata/qbittorrent
 
 networks:
   downloadStackNetwork:
