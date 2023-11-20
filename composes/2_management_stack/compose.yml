@@ -46,6 +46,7 @@ services:
   homarr:
     container_name: homarr
     image: ghcr.io/ajnart/homarr:latest
+    user: ${PGID}:${PUID}
     environment:
       <<: *environment
     <<: *default_conf
@@ -75,19 +76,19 @@ services:
     ports:
       - 9999:8080
 
-  # duplicati:
-  #   image: lscr.io/linuxserver/duplicati:latest
-  #   container_name: duplicati
-  #   environment:
-  #     UMASK: ${UMASK}
-  #     <<: *environment
-  #   <<: [*default_conf, *authelia]
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/duplicati/config:/config
-  #     - /var/local/duplicati/backups:/backups
-  #     - ${DOCKERCONFDIR}:/source
-  #   ports:
-  #     - 8200:8200
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    environment:
+      UMASK: ${UMASK}
+      <<: *environment
+    <<: [*default_conf, *authelia]
+    volumes:
+      - ${DOCKERCONFDIR}/duplicati/config:/config
+      - /var/local/duplicati/backups:/backups
+      - ${DOCKERCONFDIR}:/source
+    ports:
+      - 8200:8200
 
   # cosmos-server:
   #   image: azukaar/cosmos-server:latest
