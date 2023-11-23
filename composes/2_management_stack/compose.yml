@@ -10,6 +10,7 @@ x-authelia-conf: &authelia
   labels:
     - swag=enable
     - swag_auth=authelia
+    - docker-volume-backup.stop-during-backup
 
 x-environment: &environment
   PGID: ${PGID}
@@ -18,6 +19,7 @@ x-environment: &environment
   DOCKER_HOST: dockerproxy
 
 services:
+  ## PORTAINER##
   portainer:
     command: -H tcp://dockerproxy:2375
     container_name: portainer
@@ -32,17 +34,7 @@ services:
       - ${DOCKERCONFDIR}/portainer:/data
       - ${DOCKERSTORAGEDIR}:/storage
 
-  # watchtower:
-  #   image: containrrr/watchtower
-  #   container_name: watchtower
-  #   environment:
-  #     <<: *environment
-  #     DOCKER_HOST: "tcp://dockerproxy:2375"
-  #     WATCHTOWER_NOTIFICATION_URL: ${WATCHTOWER_MAIL_URL}
-  #     WATCHTOWER_SCHEDULE: "0 0 03 * * *"
-  #     WATCHTOWER_CLEANUP: "true"
-  #   <<: *default_conf
-
+  ## HOMARR ##
   homarr:
     container_name: homarr
     image: ghcr.io/ajnart/homarr:latest
@@ -59,59 +51,55 @@ services:
     ports:
       - 7575:7575
 
+  ## UPTIME KUMA ##
   uptime-kuma:
     image: louislam/uptime-kuma
     container_name: uptime-kuma
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: *default_conf
     volumes:
       - ${DOCKERCONFDIR}/uptime-kuma:/app/data
     ports:
       - 3001:3001
 
+  ## DOZZLE ##
   dozzle:
     container_name: dozzle
     image: amir20/dozzle:latest
     environment:
       DOZZLE_REMOTE_HOST: tcp://dockerproxy:2375
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup
     ports:
       - 9999:8080
 
-  duplicati:
-    image: lscr.io/linuxserver/duplicati:latest
-    container_name: duplicati
+  ## DOCKER VOLUME BACKUP ##
+  docker-volume-backup:
+    image: offen/docker-volume-backup:latest
+    container_name: docker-volume-backup
     environment:
-      UMASK: ${UMASK}
       <<: *environment
-    <<: [*default_conf, *authelia]
+      BACKUP_CRON_EXPRESSION: "0 4 * * *"
+      BACKUP_COMPRESSION: "gz"
+      GZIP_PARALLELISM: 1
+      BACKUP_FILENAME: "backup-%Y-%m-%dT%H-%M-%S.{{ .Extension }}"
+      BACKUP_SKIP_BACKENDS_FROM_PRUNE: s3,webdav,ssh,azure,dropbox
+      BACKUP_ARCHIVE: "/archive"
+      BACKUP_RETENTION_DAYS: "7"
+      BACKUP_PRUNING_LEEWAY: "1m"
+      BACKUP_PRUNING_PREFIX: "backup-"
+      EXEC_FORWARD_OUTPUT: "true"
+      EXEC_LABEL: "database"
+    restart: unless-stopped
+    networks:
+      - managementStackNetwork
+      - socketProxyNetwork
     volumes:
-      - ${DOCKERCONFDIR}/duplicati/config:/config
-      - ${DOCKERCONFDIR}/duplicati/backups:/backups
-      - ${DOCKERCONFDIR}/duplicati/source:/source
-    ports:
-      - 8200:8200
-
-  # cosmos-server:
-  #   image: azukaar/cosmos-server:latest
-  #   container_name: cosmos-server
-  #   hostname: cosmos-server
-  #   environment:
-  #     DOCKER_HOST: tcp://dockerproxy:2375
-  #     CLOUDFLARE_EMAIL: ${DEFAULT_EMAIL}
-  #     CLOUDFLARE_API_KEY: ${SWAG_CF_API_TOKEN}
-  #     <<: *environment
-  #   <<: *default_conf
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/cosmos-server:/config
-  #     - ${DOCKERCONFDIR}:/mnt/host/appdata
-  #     - ${DOCKERSTORAGEDIR}:/mnt/host/storage
-  #   ports:
-  #     - "8067:80"
-  #     - "4453:443"
-  #     - "4242:4242/udp"
+      - ${DOCKERCONFDIR}/dozzle:/backup/dozzle:ro
+      - /nfs/backups/docker-volumes-backups:/archive
 
 networks:
   managementStackNetwork:
