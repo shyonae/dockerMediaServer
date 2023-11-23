@@ -47,10 +47,15 @@ services:
     container_name: homarr
     image: ghcr.io/ajnart/homarr:latest
     environment:
-      <<: *environment
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      DOCKER_HOST: tcp://dockerproxy:2375
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/homarr:/app
+      - ${DOCKERCONFDIR}/homarr/configs:/app/data/configs
+      - ${DOCKERCONFDIR}/homarr/icons:/app/public/icons
+      - ${DOCKERCONFDIR}/homarr/data:/data
     ports:
       - 7575:7575
 

@@ -7,9 +7,9 @@ services:
     image: shokoanime/server:daily
     restart: unless-stopped
     environment:
-      PUID: 1000
-      PGID: 1000
-      TZ: Europe/Rome
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
     ports:
       - "8111:8111"
     networks:

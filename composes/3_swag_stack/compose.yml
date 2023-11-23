@@ -80,7 +80,7 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/crowdsec/config:/etc/crowdsec:rw
       - ${DOCKERCONFDIR}/crowdsec/data:/var/lib/crowdsec/data:rw
-      - swag/log/nginx:/var/log/swag:ro
+      - ${DOCKERCONFDIR}/swag/log/nginx:/var/log/swag:ro
       - /var/log:/var/log/host:ro
     security_opt:
       - no-new-privileges=true
