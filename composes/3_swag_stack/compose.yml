@@ -70,7 +70,8 @@ services:
       - ${SWAG_EXTRA_HOSTS}
 
   crowdsec:
-    image: docker.io/crowdsecurity/crowdsec:latest
+    image: docker.io/crowdsecurity/crowdsec:v1.5.5
+    platform: linux/amd64
     container_name: crowdsec
     environment:
       <<: *environment

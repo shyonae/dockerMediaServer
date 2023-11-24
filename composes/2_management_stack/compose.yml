@@ -79,6 +79,7 @@ services:
   ## DOCKER VOLUME BACKUP ##
   docker-volume-backup:
     image: offen/docker-volume-backup:latest
+    platform: linux/amd64
     container_name: docker-volume-backup
     user: 0:100 # needed to write to the nfs shared folder
     environment:
