@@ -82,7 +82,6 @@ services:
   docker-volume-backup:
     image: offen/docker-volume-backup:latest
     container_name: docker-volume-backup
-    user: 0:100
     environment:
       DOCKER_HOST: tcp://dockerproxy:2375
       BACKUP_CRON_EXPRESSION: "0 04 * * *"
@@ -98,14 +97,18 @@ services:
       EXEC_FORWARD_OUTPUT: "true"
       EXEC_LABEL: "database"
     restart: always
+    labels:
+      - docker-volume-backup.archive-post=adduser -S -D 0 -G users
+      - docker-volume-backup.copy-post=/bin/sh -c 'mv /archive/* /nfs_backups'
     networks:
       - managementStackNetwork
       - socketProxyNetwork
     volumes:
-      - ${DOCKERCONFDIR}/uptime-kuma:/backup/uptime-kuma:ro
+      - ${DOCKERCONFDIR}:/backup:ro
+      - ${DOCKERCONFDIR}/docker-volume-backup/archive:/archive:rw
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - /nfs/backups/docker-volumes-backups:/archive
+      - /nfs/backups/docker-volumes-backups:/nfs_backups:rw
 
 networks:
   managementStackNetwork:
