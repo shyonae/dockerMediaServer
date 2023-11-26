@@ -10,6 +10,10 @@ x-environment: &environment
   PUID: ${PUID}
   TZ: ${TZ}
 
+x-backup: &backup
+  labels:
+    - docker-volume-backup.stop-during-backup=true
+
 services:
   # wireguard:
   #   image: lscr.io/linuxserver/wireguard:latest
@@ -62,6 +66,8 @@ services:
       - guacamoleStackNetwork
     volumes:
       - ${DOCKERCONFDIR}/wg-easy:/etc/wireguard
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     restart: unless-stopped
     ports:
       - "51820:51820/udp"
@@ -91,6 +97,8 @@ services:
       VALIDATION: duckdns
       DUCKDNSTOKEN: ${DUCKDNS_TOKEN}
     <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     volumes:
       - ${DOCKERCONFDIR}/swag_duckdns:/config
 

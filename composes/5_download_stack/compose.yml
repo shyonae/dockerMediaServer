@@ -12,6 +12,7 @@ services:
     labels:
       - swag=enable
       - swag_auth=authelia
+      - docker-volume-backup.stop-during-backup=true
     networks:
       - downloadStackNetwork
       - arrStackNetwork

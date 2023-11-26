@@ -58,6 +58,8 @@ services:
       CACHE_PREFIX: "firefly"
       FIREFLY_III_LAYOUT: "v1"
     <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     ports:
       - 8007:8080
     volumes:

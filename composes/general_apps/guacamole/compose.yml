@@ -36,6 +36,7 @@ services:
     labels:
       - swag=enable
       - swag_auth=authelia
+      - docker-volume-backup.stop-during-backup=true
     ports:
       - 8080:8080
 
@@ -49,8 +50,11 @@ services:
       MYSQL_USER: guacamole
       MYSQL_PASSWORD: ${GUACAMOLE_DB_PASSWORD}
     <<: *default_conf
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'mysqldump --user guacamole --password=${GUACAMOLE_DB_PASSWORD} guacamole_db > /tmp/dump-$(date +"%Y_%m_%d-%I_%M_%p").sql'
     volumes:
       - ${DOCKERCONFDIR}/guacamole/guacamole_db:/config
+      - ${DOCKERCONFDIR}/guacamole/guacamole_db/backups:/tmp
 
 networks:
   guacamoleStackNetwork:

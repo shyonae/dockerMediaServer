@@ -6,10 +6,11 @@ x-default-conf: &default_conf
     - arrStackNetwork
     - jellyStackNetwork
 
-x-authelia-conf: &authelia
+x-authelia-conf: &autheliaPlusBackup
   labels:
     - swag=enable
     - swag_auth=authelia
+    - docker-volume-backup.stop-during-backup=true
 
 x-environment: &environment
   PGID: ${PGID}
@@ -22,7 +23,7 @@ services:
     image: lscr.io/linuxserver/jellyfin:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 8096:8096
     volumes:
@@ -34,7 +35,7 @@ services:
     container_name: jellyseerr
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 5055:5055
     volumes:

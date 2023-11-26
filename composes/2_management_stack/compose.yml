@@ -6,11 +6,11 @@ x-default-conf: &default_conf
     - managementStackNetwork
     - socketProxyNetwork
 
-x-authelia-conf: &authelia
+x-authelia-conf: &autheliaPlusBackup
   labels:
     - swag=enable
     - swag_auth=authelia
-    - docker-volume-backup.stop-during-backup
+    - docker-volume-backup.stop-during-backup=true
 
 x-environment: &environment
   PGID: ${PGID}
@@ -27,7 +27,7 @@ services:
     user: "${PUID}:${PGID}"
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 9000:9000
     volumes:
@@ -83,7 +83,7 @@ services:
     user: 0:100
     environment:
       DOCKER_HOST: tcp://dockerproxy:2375
-      BACKUP_CRON_EXPRESSION: "02 20 * * *"
+      BACKUP_CRON_EXPRESSION: "0 04 * * *"
       BACKUP_COMPRESSION: "gz"
       GZIP_PARALLELISM: 1
       BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz

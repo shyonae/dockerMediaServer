@@ -5,10 +5,11 @@ x-default-conf: &default_conf
   networks:
     - arrStackNetwork
 
-x-authelia-conf: &authelia
+x-authelia-conf: &autheliaPlusBackup
   labels:
     - swag=enable
     - swag_auth=authelia
+    - docker-volume-backup.stop-during-backup=true
 
 x-environment: &environment
   PGID: ${PGID}
@@ -21,7 +22,7 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 6767:6767
     volumes:
@@ -33,7 +34,7 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 7878:7878
     volumes:
@@ -45,7 +46,7 @@ services:
     image: lscr.io/linuxserver/sonarr:develop
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 8989:8989
     volumes:
@@ -70,7 +71,7 @@ services:
     image: golift/notifiarr
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 5454:5454
     volumes:
@@ -83,7 +84,7 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 9696:9696
     volumes:

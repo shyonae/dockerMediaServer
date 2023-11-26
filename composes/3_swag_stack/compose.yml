@@ -18,11 +18,12 @@ services:
       <<: *environment
     <<: *default_conf
     labels:
-      - swag=enable
+      - docker-volume-backup.stop-during-backup=true
     ports:
       - 9091:9091
     volumes:
       - ${DOCKERCONFDIR}/authelia:/config
+
 
   swag:
     image: lscr.io/linuxserver/swag:latest
@@ -61,6 +62,8 @@ services:
       - generalStackNetwork
       - socketProxyNetwork
       - guacamoleStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     ports:
       - 443:443
     volumes:
@@ -83,6 +86,8 @@ services:
       - ${DOCKERCONFDIR}/crowdsec/data:/var/lib/crowdsec/data:rw
       - ${DOCKERCONFDIR}/swag/log/nginx:/var/log/swag:ro
       - /var/log:/var/log/host:ro
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     security_opt:
       - no-new-privileges=true
 

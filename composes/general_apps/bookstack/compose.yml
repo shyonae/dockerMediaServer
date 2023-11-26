@@ -26,6 +26,7 @@ services:
     labels:
       - swag=enable
       - swag_auth=authelia
+      - docker-volume-backup.stop-during-backup=true
     volumes:
       - ${DOCKERCONFDIR}/bookstack/bookstack_app_data:/config
     depends_on:
@@ -41,8 +42,11 @@ services:
       MYSQL_USER: bookstack
       MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD}
     <<: *default_conf
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'mysqldump --user bookstack --password=${BOOKSTACK_DB_PASSWORD} bookstackapp > /tmp/dump-$(date +"%Y_%m_%d-%I_%M_%p").sql'
     volumes:
       - ${DOCKERCONFDIR}/bookstack/bookstack_db_data:/config
+      - ${DOCKERCONFDIR}/bookstack/bookstack_db_data/backups:/tmp
 
 networks:
   generalStackNetwork:
