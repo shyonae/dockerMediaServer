@@ -43,10 +43,11 @@ services:
       MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD}
     <<: *default_conf
     labels:
-      - docker-volume-backup.archive-pre=/bin/sh -c 'mysqldump --user bookstack --password=${BOOKSTACK_DB_PASSWORD} bookstackapp > /tmp/dump-$(date +"%Y_%m_%d-%I_%M_%p").sql'
+      - docker-volume-backup.archive-pre=/bin/sh -c 'mysqldump --all-databases > /tmp/dump-$(date +"%Y_%m_%d-%I_%M_%p").sql'
     volumes:
       - ${DOCKERCONFDIR}/bookstack/bookstack_db_data:/config
       - ${DOCKERCONFDIR}/bookstack/bookstack_db_data/backups:/tmp
+      - ${DOCKERCONFDIR}/bookstack/bookstack_db_data/.my.cnf:/root/.my.cnf
 
 networks:
   generalStackNetwork:
