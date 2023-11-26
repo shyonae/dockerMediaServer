@@ -38,7 +38,6 @@ services:
     labels:
       - docker-volume-backup.stop-during-backup=true
     environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT=6379
       - REDIS_DATABASES=16
 

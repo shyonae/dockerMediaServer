@@ -22,6 +22,7 @@ services:
     image: ghcr.io/linkwarden/linkwarden:latest
     container_name: linkwarden
     environment:
+      - NEXT_PUBLIC_DISABLE_REGISTRATION=true
       - NEXTAUTH_SECRET=${LINKWARDEN_NEXTAUTH_SECRET}
       - NEXTAUTH_URL=http://localhost:3000
       - DATABASE_URL=postgresql://postgres:${LINKWARDEN_DB_PASSWORD}@linkwarden_postgres_db:5432/postgres
