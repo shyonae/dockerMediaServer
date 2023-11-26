@@ -19,11 +19,28 @@ services:
     <<: *default_conf
     labels:
       - docker-volume-backup.stop-during-backup=true
+    depends_on:
+      - redis
     ports:
       - 9091:9091
     volumes:
       - ${DOCKERCONFDIR}/authelia:/config
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ${DOCKERCONFDIR}/redis/data:/root/redis
+      - ${DOCKERCONFDIR}/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
 
   swag:
     image: lscr.io/linuxserver/swag:latest
