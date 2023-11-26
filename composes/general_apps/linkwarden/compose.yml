@@ -32,3 +32,8 @@ services:
       - ${DOCKERCONFDIR}/linkwarden/data:/data/data
     depends_on:
       - postgres
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true
