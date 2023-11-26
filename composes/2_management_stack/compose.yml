@@ -98,8 +98,7 @@ services:
       EXEC_LABEL: "database"
     restart: always
     labels:
-      - docker-volume-backup.archive-post=adduser -S -D 0 -G users
-      - docker-volume-backup.copy-post=/bin/sh -c 'mv /archive/* /nfs_backups'
+      - docker-volume-backup.copy-post=/bin/sh -c 'adduser -S -D 0 -G users && mv /archive/backup-* /nfs_backups/'
     networks:
       - managementStackNetwork
       - socketProxyNetwork
