@@ -60,6 +60,8 @@ services:
     <<: *default_conf
     volumes:
       - ${DOCKERCONFDIR}/uptime-kuma:/app/data
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     ports:
       - 3001:3001
 
@@ -71,20 +73,17 @@ services:
       DOZZLE_REMOTE_HOST: tcp://dockerproxy:2375
       <<: *environment
     <<: *default_conf
-    labels:
-      - docker-volume-backup.stop-during-backup=true
     ports:
       - 9999:8080
 
   ## DOCKER VOLUME BACKUP ##
   docker-volume-backup:
     image: offen/docker-volume-backup:latest
-    platform: linux/amd64
     container_name: docker-volume-backup
-    user: 0:100 # needed to write to the nfs shared folder
+    user: 0:100
     environment:
-      <<: *environment
-      BACKUP_CRON_EXPRESSION: "0 4 * * *"
+      DOCKER_HOST: tcp://dockerproxy:2375
+      BACKUP_CRON_EXPRESSION: "02 20 * * *"
       BACKUP_COMPRESSION: "gz"
       GZIP_PARALLELISM: 1
       BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
@@ -101,7 +100,9 @@ services:
       - managementStackNetwork
       - socketProxyNetwork
     volumes:
-      - ${DOCKERCONFDIR}/dozzle:/backup/dozzle:ro
+      - ${DOCKERCONFDIR}/uptime-kuma:/backup/uptime-kuma:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
       - /nfs/backups/docker-volumes-backups:/archive
 
 networks:

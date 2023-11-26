@@ -47,9 +47,9 @@ services:
       STATIC_CRON_TOKEN: ${FIREFLY3_APP_KEY}
       DKR_BUILD_LOCALE: false
       DKR_CHECK_SQLITE: true
-      DKR_RUN_MIGRATION: true
-      DKR_RUN_UPGRADE: true
-      DKR_RUN_VERIFY: true
+      DKR_RUN_MIGRATION: false
+      DKR_RUN_UPGRADE: false
+      DKR_RUN_VERIFY: false
       DKR_RUN_REPORT: true
       DKR_RUN_PASSPORT_INSTALL: true
       APP_NAME: "FireflyIII"
@@ -62,7 +62,7 @@ services:
       - 8007:8080
     volumes:
       - ${DOCKERCONFDIR}/firefly_iii/firefly_iii_upload:/var/www/html/storage/upload
-      - ${DOCKERCONFDIR}/appdata/firefly_iii/database.sqlite:/var/www/html/storage/database/database.sqlite
+      - ${DOCKERCONFDIR}/firefly_iii/database:/var/www/html/storage/database
 
   # firefly_iii_db:
   #   image: lscr.io/linuxserver/mariadb

@@ -30,7 +30,6 @@ services:
     depends_on:
       - authelia
       - crowdsec
-      - cloudflare-ddns
     cap_add:
       - NET_ADMIN
     environment:
@@ -86,18 +85,6 @@ services:
       - /var/log:/var/log/host:ro
     security_opt:
       - no-new-privileges=true
-
-  cloudflare-ddns:
-    image: timothyjmiller/cloudflare-ddns:latest
-    container_name: cloudflare-ddns
-    user: ${PUID}:${PGID}
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      <<: *environment
-    <<: *default_conf
-    volumes:
-      - ${DOCKERCONFDIR}/cloudflare-ddns/config.json:/config.json
 
 networks:
   swagStackNetwork:
