@@ -83,7 +83,7 @@ services:
     image: offen/docker-volume-backup:latest
     container_name: docker-volume-backup
     environment:
-      DOCKER_HOST: tcp://dockerproxy:2375
+      DOCKER_HOST: tcp://dockerproxy_exec:2375
       BACKUP_CRON_EXPRESSION: "0 04 * * *"
       BACKUP_COMPRESSION: "gz"
       GZIP_PARALLELISM: 1

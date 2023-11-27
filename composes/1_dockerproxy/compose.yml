@@ -6,8 +6,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
-    ports:
-      - 2376:2376
     networks:
       - socketProxyNetwork
     environment:
@@ -28,6 +26,7 @@ services:
       - CONFIGS=0
       - CONTAINERS=1 # Traefik, portainer, etc.
       - DISTRIBUTION=0
+      # THIS IS WHY THE DOCKER BACKUP CONTAINER DOESN'T EXECUTE STUFF, FIX IT OR CREATE ANOTHER PROXY CONTAINER!
       - EXEC=0
       - IMAGES=1 # Portainer
       - INFO=1 # Portainer
@@ -40,6 +39,24 @@ services:
       - SYSTEM=0
       - TASKS=1 # Portainer
       - VOLUMES=1 # Portainer
+
+  dockerproxy_exec:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy_exec
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - socketProxyNetwork
+    environment:
+      # 0 to revoke access.
+      # 1 to grant access.
+      - EVENTS=1
+      - PING=1
+      - VERSION=1
+      - CONTAINERS=1
+      - EXEC=1
+      - VOLUMES=1
 
 networks:
   socketProxyNetwork:
