@@ -9,13 +9,11 @@ services:
   romm:
     image: zurdi15/romm:latest
     container_name: romm
-    user: ${PUID}:${PGID}
     environment:
       - ROMM_DB_DRIVER=mariadb
       - DB_HOST=romm_db
       - DB_PORT=3306
       - DB_USER=romm-user
-      - DB_NAME=romm
       - DB_PASSWD=${ROMM_DB_PASSWORD}
       - IGDB_CLIENT_ID=${ROMM_IGDB_CLIENTID}
       - IGDB_CLIENT_SECRET=${ROMM_IGDB_CLIENTPASSWORD}
@@ -63,8 +61,6 @@ services:
       - ${DOCKERCONFDIR}/romm/mysql_data:/var/lib/mysql
       - ${DOCKERCONFDIR}/romm/mysql_data/.my.cnf:/root/.my.cnf
       - ${DOCKERCONFDIR}/romm/db_backups:/tmp
-    ports:
-      - 3306:3306
 
 networks:
   generalStackNetwork:
