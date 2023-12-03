@@ -121,9 +121,9 @@ services:
     volumes:
       - ${DOCKERCONFDIR}/authentik/database:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${PG_PASS:?database password required}
-      POSTGRES_USER: ${PG_USER:-authentik}
-      POSTGRES_DB: ${PG_DB:-authentik}
+      POSTGRES_PASSWORD: ${AUTHENTIK_PG_PASS}
+      POSTGRES_USER: authentik
+      POSTGRES_DB: authentik
 
   authentik-redis:
     image: docker.io/library/redis:alpine
