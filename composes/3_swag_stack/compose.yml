@@ -146,6 +146,7 @@ services:
     command: server
     environment:
       AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__NAME: authentik
@@ -162,7 +163,7 @@ services:
       - ${DOCKERCONFDIR}/authentik/server/media:/media
       - ${DOCKERCONFDIR}/authentik/server/custom-templates:/templates
     ports:
-      - "9000:9000"
+      - "9007:9000"
       - "9443:9443"
     depends_on:
       - postgresql
@@ -174,6 +175,7 @@ services:
     <<: *default_conf
     command: worker
     environment:
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
       AUTHENTIK_POSTGRESQL__USER: authentik
