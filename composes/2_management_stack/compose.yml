@@ -70,7 +70,16 @@ services:
   whatsupdocker:
     image: fmartinou/whats-up-docker
     container_name: whatsupdocker
+    environment:
+      <<: *environment
+      DOCKER_HOST: tcp://dockerproxy:2375
+      WUD_AUTH_BASIC_SHYONAE_USER: shyonae
+      WUD_AUTH_BASIC_SHYONAE_HASH: ${WUD_USERNAME_HASH}
     <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/whatsupdocker:/store
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     ports:
       - 3043:3000
 
