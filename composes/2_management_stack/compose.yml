@@ -66,6 +66,14 @@ services:
     ports:
       - 3001:3001
 
+  ## WHATSUPDOCKER ##
+  whatsupdocker:
+    image: fmartinou/whats-up-docker
+    container_name: whatsupdocker
+    <<: *default_conf
+    ports:
+      - 3043:3000
+
   ## DOZZLE ##
   dozzle:
     container_name: dozzle
