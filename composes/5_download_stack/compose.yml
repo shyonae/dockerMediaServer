@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:4.5.5
+    image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
       PGID: ${PGID}
@@ -13,6 +13,7 @@ services:
       - swag=enable
       - swag_auth=authentik
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     networks:
       - downloadStackNetwork
       - arrStackNetwork

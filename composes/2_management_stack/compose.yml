@@ -6,11 +6,12 @@ x-default-conf: &default_conf
     - managementStackNetwork
     - socketProxyNetwork
 
-x-authelia-conf: &autheliaPlusBackup
+x-authelia-conf: &autheliaPlusBackupMonitorOnly
   labels:
     - swag=enable
     - swag_auth=authentik
     - docker-volume-backup.stop-during-backup=true
+    - com.centurylinklabs.watchtower.monitor-only="true"
 
 x-environment: &environment
   PGID: ${PGID}
@@ -26,7 +27,7 @@ services:
     image: portainer/portainer-ce:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *autheliaPlusBackup]
+    <<: [*default_conf, *autheliaPlusBackupMonitorOnly]
     ports:
       - 9000:9000
     volumes:
@@ -52,6 +53,23 @@ services:
     ports:
       - 7575:7575
 
+  ## WATCHTOWER ##
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    environment:
+      <<: *environment
+      DOCKER_HOST: "tcp://dockerproxy:2375"
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
+      WATCHTOWER_NOTIFICATION_URL: ${WATCHTOWER_NOTIFICATION_URL}
+      WATCHTOWER_SCHEDULE: "0 0 03 * * *"
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LIFECYCLE_HOOKS: true
+      WATCHTOWER_INCLUDE_STOPPED: true
+      WATCHTOWER_INCLUDE_RESTARTING: true
+      WATCHTOWER_MONITOR_ONLY: true
+    <<: *default_conf
+
   ## UPTIME KUMA ##
   uptime-kuma:
     image: louislam/uptime-kuma
@@ -66,24 +84,24 @@ services:
     ports:
       - 3001:3001
 
-  ## WHATSUPDOCKER ##
-  whatsupdocker:
-    image: fmartinou/whats-up-docker
-    container_name: whatsupdocker
-    environment:
-      <<: *environment
-      DOCKER_HOST: tcp://dockerproxy:2375
-      WUD_AUTH_OIDC_AUTHENTIK_CLIENTID: ${WUD_AUTH_OIDC_AUTHENTIK_CLIENTID}
-      WUD_AUTH_OIDC_AUTHENTIK_CLIENTSECRET: ${WUD_AUTH_OIDC_AUTHENTIK_CLIENTSECRET}
-      WUD_AUTH_OIDC_AUTHENTIK_DISCOVERY: ${WUD_AUTH_OIDC_AUTHENTIK_DISCOVERY}
-      WUD_AUTH_OIDC_AUTHENTIK_REDIRECT: false
-    <<: *default_conf
-    volumes:
-      - ${DOCKERCONFDIR}/whatsupdocker:/store
-    labels:
-      - docker-volume-backup.stop-during-backup=true
-    ports:
-      - 3043:3000
+  # ## WHATSUPDOCKER ##
+  # whatsupdocker:
+  #   image: fmartinou/whats-up-docker
+  #   container_name: whatsupdocker
+  #   environment:
+  #     <<: *environment
+  #     DOCKER_HOST: tcp://dockerproxy:2375
+  #     WUD_AUTH_OIDC_AUTHENTIK_CLIENTID: ${WUD_AUTH_OIDC_AUTHENTIK_CLIENTID}
+  #     WUD_AUTH_OIDC_AUTHENTIK_CLIENTSECRET: ${WUD_AUTH_OIDC_AUTHENTIK_CLIENTSECRET}
+  #     WUD_AUTH_OIDC_AUTHENTIK_DISCOVERY: ${WUD_AUTH_OIDC_AUTHENTIK_DISCOVERY}
+  #     WUD_AUTH_OIDC_AUTHENTIK_REDIRECT: true
+  #   <<: *default_conf
+  #   volumes:
+  #     - ${DOCKERCONFDIR}/whatsupdocker:/store
+  #   labels:
+  #     - docker-volume-backup.stop-during-backup=true
+  #   ports:
+  #     - 3043:3000
 
   ## DOZZLE ##
   dozzle:

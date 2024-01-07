@@ -19,6 +19,7 @@ services:
     <<: *default_conf
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     depends_on:
       - redis
     ports:
@@ -37,6 +38,7 @@ services:
     <<: *default_conf
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     environment:
       - REDIS_PORT=6379
       - REDIS_DATABASES=16
@@ -80,6 +82,7 @@ services:
       - guacamoleStackNetwork
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     ports:
       - 443:443
     volumes:
@@ -103,6 +106,7 @@ services:
       - /var/log:/var/log/host:ro
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     security_opt:
       - no-new-privileges=true
 
@@ -120,6 +124,7 @@ services:
       timeout: 5s
     labels:
       - docker-volume-backup.archive-pre=bash -c 'mkdir -p /var/lib/postgresql/data/backups && rm -rf /var/lib/postgresql/data/backups/authentik_postgres_db-dump* && pg_dump -U authentik -F t authentik | gzip >/var/lib/postgresql/data/backups/authentik_postgres_db-dump-$(date +%Y-%m-%d).tar.gz'
+      - com.centurylinklabs.watchtower.monitor-only="true"
     volumes:
       - ${DOCKERCONFDIR}/authentik/database:/var/lib/postgresql/data
     environment:
@@ -140,6 +145,7 @@ services:
       timeout: 3s
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     volumes:
       - ${DOCKERCONFDIR}/authentik/redis:/data
 
@@ -172,6 +178,7 @@ services:
     labels:
       - docker-volume-backup.stop-during-backup=true
       - swag=enable
+      - com.centurylinklabs.watchtower.monitor-only="true"
     depends_on:
       - postgresql
       - authentik-redis
@@ -194,6 +201,7 @@ services:
       DOCKER_HOST: tcp://dockerproxy:2375
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - com.centurylinklabs.watchtower.monitor-only="true"
     volumes:
       - ${DOCKERCONFDIR}/authentik/worker/media:/media
       - ${DOCKERCONFDIR}/authentik/worker/certs:/certs
