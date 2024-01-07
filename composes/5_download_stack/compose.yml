@@ -13,7 +13,7 @@ services:
       - swag=enable
       - swag_auth=authentik
       - docker-volume-backup.stop-during-backup=true
-      - com.centurylinklabs.watchtower.monitor-only=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
     networks:
       - downloadStackNetwork
       - arrStackNetwork
