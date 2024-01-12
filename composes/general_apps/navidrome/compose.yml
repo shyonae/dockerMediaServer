@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   navidrome:
+    container_name: navidrome
     image: deluan/navidrome:latest
     user: ${PUID}:${PGID}
     ports:
