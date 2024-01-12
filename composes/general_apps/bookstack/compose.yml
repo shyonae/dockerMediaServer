@@ -22,10 +22,19 @@ services:
       DB_USER: bookstack
       DB_PASS: ${BOOKSTACK_DB_PASSWORD}
       DB_DATABASE: bookstackapp
+      MAIL_DRIVER: smtp
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 465
+      MAIL_ENCRYPTION: tls
+      MAIL_USERNAME: ${DEFAULT_EMAIL}
+      MAIL_PASSWORD: ${BOOKSTACK_EMAIL_APP_PASSWORD}
+      MAIL_FROM: yabaistack@yabaiserver.org
+      MAIL_FROM_NAME: YabaiStack
     <<: *default_conf
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
+      - docker-volume-backup.stop-during-backup=true
     volumes:
       - ${DOCKERCONFDIR}/bookstack/bookstack_app_data:/config
     depends_on:
@@ -41,8 +50,12 @@ services:
       MYSQL_USER: bookstack
       MYSQL_PASSWORD: ${BOOKSTACK_DB_PASSWORD}
     <<: *default_conf
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'rm -rf /tmp/bookstack_db-dump* && mysqldump --all-databases > /tmp/bookstack_db-dump-$(date +"%Y_%m_%d-%I_%M_%p").sql'
     volumes:
       - ${DOCKERCONFDIR}/bookstack/bookstack_db_data:/config
+      - ${DOCKERCONFDIR}/bookstack/bookstack_db_data/backups:/tmp
+      - ${DOCKERCONFDIR}/bookstack/bookstack_db_data/.my.cnf:/root/.my.cnf
 
 networks:
   generalStackNetwork:

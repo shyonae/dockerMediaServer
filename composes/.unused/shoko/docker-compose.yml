@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  shoko_server:
+    container_name: shokoserver
+    image: shokoanime/server:latest
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+    ports:
+      - "8111:8111"
+    restart: unless-stopped
+    networks:
+      - generalStackNetwork
+    volumes:
+      - ${DOCKERCONFDIR}/shoko/.shoko:/home/shoko/.shoko
+      - ${DOCKERSTORAGEDIR}:/mnt/import
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

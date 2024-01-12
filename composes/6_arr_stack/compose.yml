@@ -5,10 +5,11 @@ x-default-conf: &default_conf
   networks:
     - arrStackNetwork
 
-x-authelia-conf: &authelia
+x-authelia-conf: &autheliaPlusBackup
   labels:
     - swag=enable
-    - swag_auth=authelia
+    - swag_auth=authentik
+    - docker-volume-backup.stop-during-backup=true
 
 x-environment: &environment
   PGID: ${PGID}
@@ -21,21 +22,11 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 6767:6767
     volumes:
       - ${DOCKERCONFDIR}/bazarr:/config
-      - ${DOCKERSTORAGEDIR}:/storage
-
-  bazarranime:
-    container_name: bazarranime
-    image: lscr.io/linuxserver/bazarr:latest
-    environment:
-      <<: *environment
-    <<: [*default_conf, *authelia]
-    volumes:
-      - ${DOCKERCONFDIR}/bazarranime:/config
       - ${DOCKERSTORAGEDIR}:/storage
 
   radarr:
@@ -43,7 +34,7 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 7878:7878
     volumes:
@@ -55,23 +46,11 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 7879:7878
     volumes:
       - ${DOCKERCONFDIR}/radarranime:/config
-      - ${DOCKERSTORAGEDIR}:/storage
-
-  sonarr:
-    container_name: sonarr
-    image: lscr.io/linuxserver/sonarr:develop
-    environment:
-      <<: *environment
-    <<: [*default_conf, *authelia]
-    ports:
-      - 8989:8989
-    volumes:
-      - ${DOCKERCONFDIR}/sonarr:/config
       - ${DOCKERSTORAGEDIR}:/storage
 
   sonarranime:
@@ -79,11 +58,23 @@ services:
     image: lscr.io/linuxserver/sonarr:develop
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 8990:8989
     volumes:
       - ${DOCKERCONFDIR}/sonarranime:/config
+      - ${DOCKERSTORAGEDIR}:/storage
+
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:develop
+    environment:
+      <<: *environment
+    <<: [*default_conf, *autheliaPlusBackup]
+    ports:
+      - 8989:8989
+    volumes:
+      - ${DOCKERCONFDIR}/sonarr:/config
       - ${DOCKERSTORAGEDIR}:/storage
 
   flaresolverr:
@@ -104,7 +95,7 @@ services:
     image: golift/notifiarr
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 5454:5454
     volumes:
@@ -117,11 +108,62 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authelia]
+    <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 9696:9696
     volumes:
       - ${DOCKERCONFDIR}/prowlarr:/config
+
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:v1.34.1
+    environment:
+      <<: *environment
+    <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    volumes:
+      - ${DOCKERCONFDIR}/autobrr:/config
+    ports:
+      - 7474:7474
+
+  omegabrr:
+    container_name: omegabrr
+    user: ${PUID}:${PGID}
+    image: ghcr.io/autobrr/omegabrr:latest
+    <<: *default_conf
+    ports:
+      - "7441:7441"
+    volumes:
+      - ${DOCKERCONFDIR}/omegabrr:/config
+
+  unpackerr:
+    image: golift/unpackerr
+    container_name: unpackerr
+    volumes:
+      - ${DOCKERSTORAGEDIR}:/storage
+    <<: *default_conf
+    user: ${PUID}:${PGID}
+    environment:
+      - TZ=${TZ}
+      # Sonarr Config
+      - UN_SONARR_0_URL=http://sonarr:8989
+      - UN_SONARR_0_API_KEY=${UNPACKERR_SONARR_APIKEY}
+      - UN_SONARR_0_PATHS_0=/storage
+      - UN_SONARR_0_PROTOCOLS=torrent
+      - UN_SONARR_0_TIMEOUT=10s
+      - UN_SONARR_0_DELETE_ORIG=false
+      - UN_SONARR_0_DELETE_DELAY=5m
+      # Radarr Config
+      - UN_RADARR_0_URL=http://radarr:7878
+      - UN_RADARR_0_API_KEY=${UNPACKERR_RADARR_APIKEY}
+      - UN_RADARR_0_PATHS_0=/storage
+      - UN_RADARR_0_PROTOCOLS=torrent
+      - UN_RADARR_0_TIMEOUT=10s
+      - UN_RADARR_0_DELETE_ORIG=false
+      - UN_RADARR_0_DELETE_DELAY=5m
+    security_opt:
+      - no-new-privileges:true
 
 networks:
   arrStackNetwork:

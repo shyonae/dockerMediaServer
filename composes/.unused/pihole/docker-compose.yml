@@ -13,7 +13,7 @@ services:
       WEBPASSWORD: ${PIHOLE_PASSWORD}
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
     volumes:
       - ${DOCKERCONFDIR}/pihole/etc-pihole:/etc/pihole
       - ${DOCKERCONFDIR}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d

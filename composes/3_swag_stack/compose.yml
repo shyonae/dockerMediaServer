@@ -1,0 +1,234 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - swagStackNetwork
+
+x-environment: &environment
+  PGID: ${PGID}
+  PUID: ${PUID}
+  TZ: ${TZ}
+
+services:
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    environment:
+      <<: *environment
+    <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    depends_on:
+      - redis
+    ports:
+      - 9091:9091
+    volumes:
+      - ${DOCKERCONFDIR}/authelia:/config
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ${DOCKERCONFDIR}/redis/data:/root/redis
+      - ${DOCKERCONFDIR}/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    <<: *default_conf
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    depends_on:
+      - authelia
+      - crowdsec
+    cap_add:
+      - NET_ADMIN
+    environment:
+      <<: *environment
+      URL: ${SWAG_URL}
+      SUBDOMAINS: wildcard
+      VALIDATION: dns
+      CERTPROVIDER: zerossl
+      DNSPLUGIN: cloudflare
+      STAGING: false
+      PROPAGATION: 30
+      EMAIL: ${DEFAULT_EMAIL}
+      DOCKER_MODS: linuxserver/mods:universal-docker|linuxserver/mods:swag-auto-proxy|linuxserver/mods:universal-cloudflared|linuxserver/mods:swag-crowdsec|linuxserver/mods:swag-auto-reload|linuxserver/mods:swag-dashboard
+      CROWDSEC_API_KEY: ${SWAG_CROWDSEC_API_KEY}
+      CROWDSEC_LAPI_URL: http://crowdsec:8080
+      DOCKER_HOST: dockerproxy
+      CF_ZONE_ID: ${SWAG_CF_ZONE_ID}
+      CF_ACCOUNT_ID: ${SWAG_CF_ACCOUNT_ID}
+      CF_API_TOKEN: ${SWAG_CF_API_TOKEN}
+      CF_TUNNEL_NAME: ${SWAG_CF_TUNNEL_NAME}
+      CF_TUNNEL_PASSWORD=: ${SWAG_CF_TUNNEL_PASSWORD}
+      FILE__CF_TUNNEL_CONFIG: /config/tunnelconfig.yml
+    restart: unless-stopped
+    networks:
+      - swagStackNetwork
+      - managementStackNetwork
+      - arrStackNetwork
+      - downloadStackNetwork
+      - generalStackNetwork
+      - socketProxyNetwork
+      - guacamoleStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    ports:
+      - 443:443
+    volumes:
+      - ${DOCKERCONFDIR}/swag:/config
+    extra_hosts:
+      - ${SWAG_EXTRA_HOSTS}
+
+  crowdsec:
+    image: docker.io/crowdsecurity/crowdsec:v1.5.5
+    container_name: crowdsec
+    user: ${PUID}:${PGID}
+    environment:
+      <<: *environment
+      COLLECTIONS: "crowdsecurity/nginx crowdsecurity/http-cve crowdsecurity/whitelist-good-actors"
+      CUSTOM_HOSTNAME: ${CROWDSEC_CUSTOM_HOSTNAME}
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/crowdsec/config:/etc/crowdsec:rw
+      - ${DOCKERCONFDIR}/crowdsec/data:/var/lib/crowdsec/data:rw
+      - ${DOCKERCONFDIR}/swag/log/nginx:/var/log/swag:ro
+      - /var/log:/var/log/host:ro
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    security_opt:
+      - no-new-privileges=true
+
+  ### AUTHENTIK ###
+
+  postgresql:
+    image: docker.io/library/postgres:12-alpine
+    container_name: authentik-postgres
+    <<: *default_conf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    labels:
+      - docker-volume-backup.archive-pre=bash -c 'mkdir -p /var/lib/postgresql/data/backups && rm -rf /var/lib/postgresql/data/backups/authentik_postgres_db-dump* && pg_dump -U authentik -F t authentik | gzip >/var/lib/postgresql/data/backups/authentik_postgres_db-dump-$(date +%Y-%m-%d).tar.gz'
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${AUTHENTIK_PG_PASS}
+      POSTGRES_USER: authentik
+      POSTGRES_DB: authentik
+
+  authentik-redis:
+    image: docker.io/library/redis:alpine
+    container_name: authentik-redis
+    command: --save 60 1 --loglevel warning
+    <<: *default_conf
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/redis:/data
+
+  server:
+    image: ghcr.io/goauthentik/server:2023.10.1
+    container_name: authentik-server
+    <<: *default_conf
+    command: server
+    environment:
+      AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_PG_PASS}
+      AUTHENTIK_EMAIL__HOST: smtp.gmail.com
+      AUTHENTIK_EMAIL__PORT: 465
+      AUTHENTIK_EMAIL__USERNAME: ${DEFAULT_EMAIL}
+      AUTHENTIK_EMAIL__PASSWORD: ${AUTHENTIK_EMAIL_APP_PWD}
+      AUTHENTIK_EMAIL__USE_TLS: true
+      AUTHENTIK_EMAIL__USE_SSL: true
+      AUTHENTIK_EMAIL__TIMEOUT: 10
+      AUTHENTIK_EMAIL__FROM: authentik@yabaiserver.org
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/server/media:/media
+      - ${DOCKERCONFDIR}/authentik/server/custom-templates:/templates
+    ports:
+      - "9007:9000"
+      - "9443:9443"
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - swag=enable
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    depends_on:
+      - postgresql
+      - authentik-redis
+
+  worker:
+    image: ghcr.io/goauthentik/server:2023.10.1
+    container_name: authentik-worker
+    <<: *default_conf
+    networks:
+      - socketProxyNetwork
+      - swagStackNetwork
+    command: worker
+    environment:
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_PG_PASS}
+      DOCKER_HOST: tcp://dockerproxy:2375
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/worker/media:/media
+      - ${DOCKERCONFDIR}/authentik/worker/certs:/certs
+      - ${DOCKERCONFDIR}/authentik/worker/custom-templates:/templates
+    depends_on:
+      - postgresql
+      - authentik-redis
+
+networks:
+  swagStackNetwork:
+    driver: bridge
+    external: true
+  managementStackNetwork:
+    driver: bridge
+    external: true
+  arrStackNetwork:
+    driver: bridge
+    external: true
+  downloadStackNetwork:
+    driver: bridge
+    external: true
+  generalStackNetwork:
+    driver: bridge
+    external: true
+  socketProxyNetwork:
+    driver: bridge
+    external: true
+  guacamoleStackNetwork:
+    driver: bridge
+    external: true

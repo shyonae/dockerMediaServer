@@ -19,7 +19,7 @@ services:
     <<: *default_conf
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
 
   nextcloud_postgres_db:
     image: postgres
@@ -31,7 +31,7 @@ services:
       POSTGRES_DB: nextcloud_postgres_db
     <<: *default_conf
     volumes:
-      - ${DOCKERCONFDIR}/nextcloud/postgres_storage:/var/lib/postgresql/data 
+      - ${DOCKERCONFDIR}/nextcloud/postgres_storage:/var/lib/postgresql/data
 
 networks:
   generalStackNetwork:

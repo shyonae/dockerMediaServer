@@ -1,0 +1,47 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - arrStackNetwork
+
+x-authelia-conf: &authelia
+  labels:
+    - swag=enable
+    - swag_auth=authentik
+
+x-environment: &environment
+  PGID: ${PGID}
+  PUID: ${PUID}
+  TZ: ${TZ}
+
+services:
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    environment:
+      <<: *environment
+    <<: [*default_conf, *authelia]
+    ports:
+      - 6767:6767
+    volumes:
+      - ${DOCKERCONFDIR}/bazarr:/config
+      - ${DOCKERSTORAGEDIR}:/storage
+
+  medusa:
+    image: lscr.io/linuxserver/medusa:latest
+    container_name: medusa
+    environment:
+      <<: *environment
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/medusa:/config
+      - ${DOCKERSTORAGEDIR}/downloads/torrents:/downloads
+      - ${DOCKERSTORAGEDIR}/medialibrary:/tv
+    ports:
+      - 8085:8081
+
+networks:
+  arrStackNetwork:
+    driver: bridge
+    external: true

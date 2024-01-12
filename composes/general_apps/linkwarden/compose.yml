@@ -1,0 +1,44 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  user: "${PUID}:${PGID}"
+  restart: unless-stopped
+  networks:
+    - generalStackNetwork
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: linkwarden_postgres_db
+    environment:
+      POSTGRES_PASSWORD: ${LINKWARDEN_DB_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: linkwarden_postgres_db
+    labels:
+      - docker-volume-backup.archive-pre=bash -c 'mkdir -p /var/lib/postgresql/data/backups && rm -rf /var/lib/postgresql/data/backups/linkwarden_postgres_db-dump* && pg_dump -U postgres -F t linkwarden_postgres_db | gzip >/var/lib/postgresql/data/backups/linkwarden_postgres_db-dump-$(date +%Y-%m-%d).tar.gz'
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/linkwarden/postgresql:/var/lib/postgresql/data
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    container_name: linkwarden
+    environment:
+      - NEXT_PUBLIC_DISABLE_REGISTRATION=true
+      - NEXTAUTH_SECRET=${LINKWARDEN_NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=http://localhost:3000
+      - DATABASE_URL=postgresql://postgres:${LINKWARDEN_DB_PASSWORD}@linkwarden_postgres_db:5432/postgres
+    <<: *default_conf
+    ports:
+      - 3000:3000
+    volumes:
+      - ${DOCKERCONFDIR}/linkwarden/data:/data/data
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    depends_on:
+      - postgres
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

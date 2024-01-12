@@ -1,0 +1,45 @@
+version: "3.8"
+
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - generalStackNetwork
+
+services:
+  romm:
+    image: zurdi15/romm:latest
+    container_name: romm
+    user: ${PUID}:${PGID}
+    environment:
+      - ROMM_DB_DRIVER=sqlite
+      - IGDB_CLIENT_ID=${ROMM_IGDB_CLIENTID}
+      - IGDB_CLIENT_SECRET=${ROMM_IGDB_CLIENTPASSWORD}
+      - STEAMGRIDDB_API_KEY=${ROMM_STEAMGRIDDB_APIKEY}
+      - ROMM_AUTH_ENABLED=false
+      - ROMM_AUTH_SECRET_KEY=${ROMM_SECRET_KEY}
+      - ROMM_AUTH_USERNAME=shyonae
+      - ROMM_AUTH_PASSWORD=${ROMM_ADMIN_PASSWORD}
+      - ENABLE_RESCAN_ON_FILESYSTEM_CHANGE=true # Runs a quick scan on the library when a file is added or removed
+      - RESCAN_ON_FILESYSTEM_CHANGE_DELAY=5 # Delay in seconds before running the quick scan (default: 5)
+      - ENABLE_SCHEDULED_RESCAN=true # Runs a quick scan on the library at a given time
+      - SCHEDULED_RESCAN_CRON=0 3 * * * # Cron expression for the scheduled scan (default: 0 3 * * * - At 3:00 AM every day)
+      - ENABLE_SCHEDULED_UPDATE_SWITCH_TITLEDB=true # Updates the Switch TitleDB database at a given time
+      - SCHEDULED_UPDATE_SWITCH_TITLEDB_CRON=0 4 * * * # Cron expression for the scheduled update (default: 0 4 * * * - At 4:00 AM every day)
+      - ENABLE_SCHEDULED_UPDATE_MAME_XML=true # Updates the MAME XML database at a given time
+      - SCHEDULED_UPDATE_MAME_XML_CRON=0 5 * * * # Cron expression for the scheduled update (default: 0 5 * * * - At 5:00 AM every day)
+    <<: *default_conf
+    volumes:
+      - /nfs/library:/romm/library
+      - /nfs/library/resources:/romm/resources
+      - ${DOCKERCONFDIR}/romm/logs:/romm/logs
+      - ${DOCKERCONFDIR}/romm/database:/romm/database
+      - ${DOCKERCONFDIR}/romm/config.yml:/romm/config.yml
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    ports:
+      - 5689:8080
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

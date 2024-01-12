@@ -9,16 +9,17 @@ services:
       PUID: ${PUID}
       UMASK: ${UMASK}
       TZ: ${TZ}
-      WEBUI_PORT: 8080
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
     networks:
       - downloadStackNetwork
       - arrStackNetwork
     volumes:
       - ${DOCKERCONFDIR}/qbittorrent:/config
-      - ${DOCKERSTORAGEDIR}/downloads/torrents:/storage/downloads/torrents
+      - ${DOCKERSTORAGEDIR}:/storage
     ports:
       - 8080:8080
     restart: unless-stopped

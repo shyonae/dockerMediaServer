@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  shoko_server:
+    shm_size: 256m
+    container_name: shokoserver
+    image: shokoanime/server:daily
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    ports:
+      - "8111:8111"
+    networks:
+      - jellyStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/shoko-server:/home/shoko/.shoko
+      - ${DOCKERSTORAGEDIR}:/mnt
+
+networks:
+  jellyStackNetwork:
+    driver: bridge
+    external: true

@@ -49,7 +49,7 @@ services:
     <<: *default_conf
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
     volumes:
       - ${DOCKERCONFDIR}/recipes/staticfiles:/opt/recipes/staticfiles
       - ${DOCKERCONFDIR}/recipes/mediafiles:/opt/recipes/mediafiles

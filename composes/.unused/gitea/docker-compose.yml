@@ -20,7 +20,7 @@ services:
       - GITEA__database__PASSWD=${GITEA_DB_PASSWORD}
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
     <<: *default_conf
     volumes:
       - ${DOCKERCONFDIR}/gitea:/data

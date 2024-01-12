@@ -20,7 +20,7 @@ services:
       - ${DOCKERCONFDIR}/vaultwarden/data/:/data/
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
     ports:
       - 8623:80
 

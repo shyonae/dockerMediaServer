@@ -14,9 +14,11 @@ services:
       - generalStackNetwork
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
+      - docker-volume-backup.stop-during-backup=true
     volumes:
       - ${DOCKERCONFDIR}/code-server:/config
+      - ${DOCKERCONFDIR}:/config/workspace/appdata
     ports:
       - 8443:8443
 

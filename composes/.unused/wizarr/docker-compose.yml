@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
     volumes:
       - ${DOCKERCONFDIR}/wizarr:/data/database
     networks:
@@ -24,4 +24,3 @@ networks:
   shyDockerServer:
     driver: bridge
     external: true
-    

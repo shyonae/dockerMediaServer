@@ -29,7 +29,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     labels:
       - swag=enable
-      - swag_auth=authelia
+      - swag_auth=authentik
   database:
     image: mariadb:latest
     container_name: piglet-db
@@ -44,4 +44,3 @@ networks:
   shyDockerServer:
     driver: bridge
     external: true
-    
