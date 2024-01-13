@@ -42,7 +42,28 @@ services:
       - ${DOCKERSTORAGEDIR}/medialibrary/music:/music
       - ${DOCKERSTORAGEDIR}/downloads/torrents/music:/downloads
 
+  betanin:
+    image: sentriz/betanin:latest
+    ports:
+      - 9393:9393
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    <<: *default_conf
+    networks:
+      - musicStackNetwork
+      - downloadStackNetwork
+    volumes:
+      - ${DOCKERCONFDIR}/betanin/data:/b/.local/share/betanin/
+      - ${DOCKERCONFDIR}/betanin/config:/b/.config/betanin/
+      - ${DOCKERCONFDIR}/beets:/b/.config/beets/
+      - ${DOCKERSTORAGEDIR}/medialibrary/music:/music/
+      - ${DOCKERSTORAGEDIR}/downloads/torrents/musi:/downloads/
+
 networks:
   musicStackNetwork:
+    driver: bridge
+    external: true
+  downloadStackNetwork:
     driver: bridge
     external: true
