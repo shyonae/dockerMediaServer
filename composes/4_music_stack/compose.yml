@@ -27,20 +27,20 @@ services:
       - ${DOCKERCONFDIR}/navidrome:/data
       - ${DOCKERSTORAGEDIR}/medialibrary/music:/music:ro
 
-  beets:
-    container_name: beets
-    image: lscr.io/linuxserver/beets:latest
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    ports:
-      - 8337:8337
-    <<: *default_conf
-    volumes:
-      - ${DOCKERCONFDIR}/beets:/config
-      - ${DOCKERSTORAGEDIR}/medialibrary/music:/music
-      - ${DOCKERSTORAGEDIR}/downloads/torrents/music:/downloads
+  # beets:
+  #   container_name: beets
+  #   image: lscr.io/linuxserver/beets:latest
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #   ports:
+  #     - 8337:8337
+  #   <<: *default_conf
+  #   volumes:
+  #     - ${DOCKERCONFDIR}/beets:/config
+  #     - ${DOCKERSTORAGEDIR}/medialibrary/music:/music
+  #     - ${DOCKERSTORAGEDIR}/downloads/torrents/music:/downloads
 
   betanin:
     image: sentriz/betanin:latest
