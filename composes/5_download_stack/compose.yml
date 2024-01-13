@@ -17,6 +17,7 @@ services:
     networks:
       - downloadStackNetwork
       - arrStackNetwork
+      - musicStackNetwork
     volumes:
       - ${DOCKERCONFDIR}/qbittorrent:/config
       - ${DOCKERSTORAGEDIR}:/storage
@@ -26,6 +27,9 @@ services:
 
 networks:
   downloadStackNetwork:
+    driver: bridge
+    external: true
+  musicStackNetwork:
     driver: bridge
     external: true
   arrStackNetwork:
