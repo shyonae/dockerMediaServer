@@ -14,12 +14,12 @@ services:
   gaseous-server:
     container_name: gaseous-server
     image: gaseousgames/gaseousserver:latest
-    user: ${PUID}:${PGID}
     environment:
       <<: *environment
       dbhost: gaseous_db
       dbuser: root
       dbpass: ${GASEOUS_DB_ROOT_PASSWORD}
+      dbname: gaseous_db
       igdbclientid: ${ROMM_IGDB_CLIENTID}
       igdbclientsecret: ${ROMM_IGDB_CLIENTPASSWORD}
     <<: *default_conf
@@ -34,10 +34,11 @@ services:
   gaseous_db:
     image: lscr.io/linuxserver/mariadb
     container_name: gaseous_db
+    hostname: gaseous_db
     environment:
       <<: *environment
       MARIADB_ROOT_PASSWORD: ${GASEOUS_DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: gaseous
+      MYSQL_DATABASE: gaseous_db
       MYSQL_USER: gaseous
       MYSQL_PASSWORD: ${GASEOUS_DB_PASSWORD}
     <<: *default_conf
