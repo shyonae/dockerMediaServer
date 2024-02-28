@@ -32,6 +32,7 @@ services:
       - generalStackNetwork
       - socketProxyNetwork
       - guacamoleStackNetwork
+      - immichStackNetwork
     volumes:
       - ${DOCKERCONFDIR}/wg-easy:/etc/wireguard
     labels:
@@ -90,5 +91,8 @@ networks:
     driver: bridge
     external: true
   guacamoleStackNetwork:
+    driver: bridge
+    external: true
+  immichStackNetwork:
     driver: bridge
     external: true
