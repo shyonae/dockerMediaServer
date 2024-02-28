@@ -1,7 +1,6 @@
 version: "3.8"
 
 x-default-conf: &default_conf
-  user: ${PUID}:${PGID}
   restart: always
   networks:
     - immichStackNetwork
@@ -43,7 +42,7 @@ services:
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     command: ["start.sh", "microservices"]
     volumes:
-      - ${DOCKERCONFDIR}/immich/microservices-data:/usr/src/app/upload
+      - /smb/backups/Immich/upload:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     environment:
       <<: *environment
