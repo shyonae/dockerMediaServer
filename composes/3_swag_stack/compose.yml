@@ -111,145 +111,105 @@ services:
     security_opt:
       - no-new-privileges=true
 
-  # ### AUTHENTIK ###
+  ### AUTHENTIK ###
 
-  # postgresql:
-  #   image: docker.io/library/postgres:12-alpine
-  #   container_name: authentik-postgres
-  #   <<: *default_conf
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-  #     start_period: 20s
-  #     interval: 30s
-  #     retries: 5
-  #     timeout: 5s
-  #   labels:
-  #     - docker-volume-backup.archive-pre=bash -c 'mkdir -p /var/lib/postgresql/data/backups && rm -rf /var/lib/postgresql/data/backups/authentik_postgres_db-dump* && pg_dump -U authentik -F t authentik | gzip >/var/lib/postgresql/data/backups/authentik_postgres_db-dump-$(date +%Y-%m-%d).tar.gz'
-  #     - "com.centurylinklabs.watchtower.monitor-only=true"
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/authentik/database:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_PASSWORD: ${AUTHENTIK_PG_PASS}
-  #     POSTGRES_USER: authentik
-  #     POSTGRES_DB: authentik
-
-  # authentik-redis:
-  #   image: docker.io/library/redis:alpine
-  #   container_name: authentik-redis
-  #   command: --save 60 1 --loglevel warning
-  #   <<: *default_conf
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-  #     start_period: 20s
-  #     interval: 30s
-  #     retries: 5
-  #     timeout: 3s
-  #   labels:
-  #     - docker-volume-backup.stop-during-backup=true
-  #     - "com.centurylinklabs.watchtower.monitor-only=true"
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/authentik/redis:/data
-
-  # server:
-  #   image: ghcr.io/goauthentik/server:2023.10.1
-  #   container_name: authentik-server
-  #   <<: *default_conf
-  #   command: server
-  #   environment:
-  #     AUTHENTIK_REDIS__HOST: authentik-redis
-  #     AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
-  #     AUTHENTIK_POSTGRESQL__HOST: postgresql
-  #     AUTHENTIK_POSTGRESQL__USER: authentik
-  #     AUTHENTIK_POSTGRESQL__NAME: authentik
-  #     AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_PG_PASS}
-  #     AUTHENTIK_EMAIL__HOST: smtp.gmail.com
-  #     AUTHENTIK_EMAIL__PORT: 465
-  #     AUTHENTIK_EMAIL__USERNAME: ${DEFAULT_EMAIL}
-  #     AUTHENTIK_EMAIL__PASSWORD: ${AUTHENTIK_EMAIL_APP_PWD}
-  #     AUTHENTIK_EMAIL__USE_TLS: true
-  #     AUTHENTIK_EMAIL__USE_SSL: true
-  #     AUTHENTIK_EMAIL__TIMEOUT: 10
-  #     AUTHENTIK_EMAIL__FROM: authentik@yabaiserver.org
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/authentik/server/media:/media
-  #     - ${DOCKERCONFDIR}/authentik/server/custom-templates:/templates
-  #   ports:
-  #     - "9007:9000"
-  #     - "9443:9443"
-  #   labels:
-  #     - docker-volume-backup.stop-during-backup=true
-  #     - swag=enable
-  #     - "com.centurylinklabs.watchtower.monitor-only=true"
-  #   depends_on:
-  #     - postgresql
-  #     - authentik-redis
-
-  # worker:
-  #   image: ghcr.io/goauthentik/server:2023.10.1
-  #   container_name: authentik-worker
-  #   <<: *default_conf
-  #   networks:
-  #     - socketProxyNetwork
-  #     - swagStackNetwork
-  #   command: worker
-  #   environment:
-  #     AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
-  #     AUTHENTIK_REDIS__HOST: redis
-  #     AUTHENTIK_POSTGRESQL__HOST: postgresql
-  #     AUTHENTIK_POSTGRESQL__USER: authentik
-  #     AUTHENTIK_POSTGRESQL__NAME: authentik
-  #     AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_PG_PASS}
-  #     DOCKER_HOST: tcp://dockerproxy:2375
-  #   labels:
-  #     - docker-volume-backup.stop-during-backup=true
-  #     - "com.centurylinklabs.watchtower.monitor-only=true"
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/authentik/worker/media:/media
-  #     - ${DOCKERCONFDIR}/authentik/worker/certs:/certs
-  #     - ${DOCKERCONFDIR}/authentik/worker/custom-templates:/templates
-  #   depends_on:
-  #     - postgresql
-  #     - authentik-redis
-
-  keycloak-postgresql:
-    image: postgres:16
-    container_name: keycloak-postgresql
-    hostname: keycloak-postgresql
-    environment:
-      POSTGRES_USER: keycloak
-      POSTGRES_DB: keycloak
-      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
-      <<: *environment
+  postgresql:
+    image: docker.io/library/postgres:12-alpine
+    container_name: authentik-postgres
     <<: *default_conf
-    volumes:
-      - ${DOCKERCONFDIR}/keycloak/postgresql_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
     labels:
-      - docker-volume-backup.archive-pre=bash -c 'mkdir -p /var/lib/postgresql/data/backups && rm -rf /var/lib/postgresql/data/backups/keycloak_postgres_db-dump* && pg_dump -U keycloak -F t keycloak | gzip >/var/lib/postgresql/data/backups/keycloak_postgres_db-dump-$(date +%Y-%m-%d).tar.gz'
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:22.0.3
-    container_name: keycloak
-    command: start
-    depends_on:
-      - keycloak-postgresql
+      - docker-volume-backup.archive-pre=bash -c 'mkdir -p /var/lib/postgresql/data/backups && rm -rf /var/lib/postgresql/data/backups/authentik_postgres_db-dump* && pg_dump -U authentik -F t authentik | gzip >/var/lib/postgresql/data/backups/authentik_postgres_db-dump-$(date +%Y-%m-%d).tar.gz'
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/database:/var/lib/postgresql/data
     environment:
-      KC_HOSTNAME_STRICT: false
-      # - KC_HOSTNAME=
-      KC_PROXY_HEADERS:
-      KC_HTTP_ENABLED: true
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
-      KC_DB_URL_HOST: keycloak-postgresql
-      KC_DB_URL_PORT: 5432
-      KC_DB_URL_DATABASE: keycloak
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      <<: *environment
+      POSTGRES_PASSWORD: ${AUTHENTIK_PG_PASS}
+      POSTGRES_USER: authentik
+      POSTGRES_DB: authentik
+
+  authentik-redis:
+    image: docker.io/library/redis:alpine
+    container_name: authentik-redis
+    command: --save 60 1 --loglevel warning
     <<: *default_conf
-    ports:
-      - "7112:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
     labels:
       - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/redis:/data
+
+  server:
+    image: ghcr.io/goauthentik/server:2023.10.1
+    container_name: authentik-server
+    <<: *default_conf
+    command: server
+    environment:
+      AUTHENTIK_REDIS__HOST: authentik-redis
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_PG_PASS}
+      AUTHENTIK_EMAIL__HOST: smtp.gmail.com
+      AUTHENTIK_EMAIL__PORT: 465
+      AUTHENTIK_EMAIL__USERNAME: ${DEFAULT_EMAIL}
+      AUTHENTIK_EMAIL__PASSWORD: ${AUTHENTIK_EMAIL_APP_PWD}
+      AUTHENTIK_EMAIL__USE_TLS: true
+      AUTHENTIK_EMAIL__USE_SSL: true
+      AUTHENTIK_EMAIL__TIMEOUT: 10
+      AUTHENTIK_EMAIL__FROM: authentik@yabaiserver.org
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/server/media:/media
+      - ${DOCKERCONFDIR}/authentik/server/custom-templates:/templates
+    ports:
+      - "9007:9000"
+      - "9443:9443"
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - swag=enable
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    depends_on:
+      - postgresql
+      - authentik-redis
+
+  worker:
+    image: ghcr.io/goauthentik/server:2023.10.1
+    container_name: authentik-worker
+    <<: *default_conf
+    networks:
+      - socketProxyNetwork
+      - swagStackNetwork
+    command: worker
+    environment:
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_PG_PASS}
+      DOCKER_HOST: tcp://dockerproxy:2375
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+    volumes:
+      - ${DOCKERCONFDIR}/authentik/worker/media:/media
+      - ${DOCKERCONFDIR}/authentik/worker/certs:/certs
+      - ${DOCKERCONFDIR}/authentik/worker/custom-templates:/templates
+    depends_on:
+      - postgresql
+      - authentik-redis
 
 networks:
   swagStackNetwork:
