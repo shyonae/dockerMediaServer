@@ -92,7 +92,7 @@ services:
 
   autobrr:
     container_name: autobrr
-    image: ghcr.io/autobrr/autobrr:v1.36.0
+    image: ghcr.io/autobrr/autobrr:latest
     environment:
       <<: *environment
     <<: *default_conf

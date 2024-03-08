@@ -103,7 +103,7 @@ services:
     container_name: docker-volume-backup
     user: 0:100
     environment:
-      BACKUP_CRON_EXPRESSION: "30 23 * * *"
+      BACKUP_CRON_EXPRESSION: "30 06 * * *"
       BACKUP_COMPRESSION: "gz"
       GZIP_PARALLELISM: 1
       BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
