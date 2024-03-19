@@ -15,7 +15,7 @@ services:
     image: infisical/infisical:latest-postgres
     env_file: ../../../appdata/infisical/.env
     depends_on:
-      - infisical-db
+      - infisical_db
     <<: [*default_conf, *labels]
     command: npm run migration:latest
     pull_policy: always
@@ -25,7 +25,7 @@ services:
     image: infisical/infisical:latest-postgres
     env_file: ../../../appdata/infisical/.env
     depends_on:
-      - infisical-db
+      - infisical_db
       - infisical-redis
       - infisical-db-migration
     <<: [*default_conf, *labels]
@@ -42,13 +42,12 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     <<: [*default_conf, *labels]
-    ports:
-      - 6379:6379
     volumes:
       - ${DOCKERCONFDIR}/infisical/redis_data:/data
 
-  infisical-db:
-    container_name: infisical-db
+  infisical_db:
+    container_name: infisical_db
+    hostname: infisical_db
     image: postgres:14-alpine
     env_file: ../../../appdata/infisical/.env
     <<: [*default_conf, *labels]
