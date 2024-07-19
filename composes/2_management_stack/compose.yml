@@ -11,7 +11,7 @@ x-logging-conf: &logging
       max-file: "2"
       max-size: "100m"
 
-x-authentik-conf: &authentikPlusBackupMonitorOnly
+x-authentik-conf: &labels
   labels:
     # - swag=enable
     # - swag_auth=authentik
@@ -31,12 +31,7 @@ services:
     image: portainer/portainer-ce:latest
     environment:
       <<: *environment
-    <<: [*default_conf, *authentikPlusBackupMonitorOnly]
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "2"
-        max-size: "100m"
+    <<: [*default_conf, *labels, *logging]
     ports:
       - 9000:9000
     volumes:
@@ -105,6 +100,23 @@ services:
   #   <<: *default_conf
   #   ports:
   #     - 9999:8080
+
+  ## DOCKING STATION ##
+  docking-station:
+    command: -H tcp://dockerproxy:2375
+    image: loolzzz/docking-station:latest
+    container_name: docking-station
+    environment:
+      <<: *environment
+    <<: [*default_conf, *labels, *logging]
+    volumes:
+      - ${DOCKERCONFDIR}/docking-station/config:/config
+      - ${DOCKERCONFDIR}/docking-station/data:/data
+      - ${DOCKERCONFDIR}/docking-station/logs:/logs
+      - /etc/localtime:/etc/localtime:ro
+      - ${DOCKER_COMPOSE_DIR}:/mnt/compose-files
+    ports:
+      - 3045:3000
 
   ## DOCKER VOLUME BACKUP ##
   docker-volume-backup:
