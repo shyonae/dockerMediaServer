@@ -103,7 +103,6 @@ services:
 
   ## DOCKING STATION ##
   docking-station:
-    command: -H tcp://dockerproxy:2375
     image: loolzzz/docking-station:latest
     container_name: docking-station
     environment:
@@ -116,7 +115,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${DOCKER_COMPOSE_DIR}:/mnt/compose-files
     ports:
-      - 3045:3000
+      - 3046:3000
+      - 3047:3001
 
   ## DOCKER VOLUME BACKUP ##
   docker-volume-backup:
