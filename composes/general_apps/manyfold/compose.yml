@@ -1,0 +1,29 @@
+services:
+  manyfold:
+    image: lscr.io/linuxserver/manyfold:latest
+    container_name: manyfold
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      DATABASE_URL: "sqlite3:/config/manyfold.sqlite3"
+    restart: unless-stopped
+    networks:
+      - generalStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "100m"
+    volumes:
+      - ${DOCKERCONFDIR}/manyfold/config:/config
+      - ${DOCKERSTORAGEDIR}/stl_files:/libraries
+    ports:
+      - 3214:3214
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

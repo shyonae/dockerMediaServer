@@ -107,16 +107,16 @@ services:
     container_name: docking-station
     environment:
       <<: *environment
+      WEB_PORT: 3046
     <<: [*default_conf, *labels, *logging]
     volumes:
       - ${DOCKERCONFDIR}/docking-station/config:/config
       - ${DOCKERCONFDIR}/docking-station/data:/data
       - ${DOCKERCONFDIR}/docking-station/logs:/logs
       - /etc/localtime:/etc/localtime:ro
-      - ${DOCKER_COMPOSE_DIR}:/mnt/compose-files
+      - ${DOCKER_COMPOSE_DIR}:${DOCKER_COMPOSE_DIR}
     ports:
-      - 3046:3000
-      - 3047:3001
+      - 3046:3046
 
   ## DOCKER VOLUME BACKUP ##
   docker-volume-backup:
