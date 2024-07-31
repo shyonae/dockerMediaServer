@@ -7,6 +7,7 @@ services:
       PUID: ${PUID}
       TZ: ${TZ}
       DATABASE_URL: "sqlite3:/config/manyfold.sqlite3"
+      REDIS_URL: "redis://redis:6379"
       SECRET_KEY_BASE: ${AUTHENTIK_SECRET_KEY}
     restart: unless-stopped
     networks:
