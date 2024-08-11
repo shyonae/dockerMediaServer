@@ -66,7 +66,7 @@ services:
       CROWDSEC_API_KEY: ${SWAG_CROWDSEC_API_KEY}
       CROWDSEC_LAPI_URL: http://crowdsec:8080
       URL: ${DUCKDNS_SUBDOMAIN}
-      SUBDOMAINS: wildcard
+      # SUBDOMAINS: wildcard
       VALIDATION: duckdns
       DUCKDNSTOKEN: ${DUCKDNS_TOKEN}
     <<: *default_conf

@@ -103,18 +103,19 @@ services:
   docker-volume-backup:
     image: offen/docker-volume-backup:latest
     container_name: docker-volume-backup
-    user: 0:100
+    user: 1000:100
     environment:
+      DOCKER_HOST: "tcp://dockerproxy:2375"
       BACKUP_CRON_EXPRESSION: "30 06 * * *"
       BACKUP_COMPRESSION: "gz"
       GZIP_PARALLELISM: 1
-      BACKUP_FILENAME: backup-%Y-%m-%dT%H-%M-%S.tar.gz
-      BACKUP_LATEST_SYMLINK: backup-latest.tar.gz
+      BACKUP_FILENAME: backup-mainhpsff-%Y-%m-%dT%H-%M-%S.tar.gz
+      # BACKUP_LATEST_SYMLINK: backup-mainhpsff-latest.tar.gz
       BACKUP_SKIP_BACKENDS_FROM_PRUNE: s3,webdav,ssh,azure,dropbox
       BACKUP_ARCHIVE: "/archive"
       BACKUP_RETENTION_DAYS: "7"
       BACKUP_PRUNING_LEEWAY: "1m"
-      BACKUP_PRUNING_PREFIX: "backup-"
+      BACKUP_PRUNING_PREFIX: "backup-mainhpsff"
       EXEC_FORWARD_OUTPUT: "false"
     restart: always
     logging:
@@ -126,11 +127,10 @@ services:
       - managementStackNetwork
       - socketProxyNetwork
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DOCKERCONFDIR}:/backup:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - /nfs/backups/docker-volumes-backups:/archive:rw
+      - /smb/backups/dockerBackups:/archive:rw
 
 networks:
   managementStackNetwork:

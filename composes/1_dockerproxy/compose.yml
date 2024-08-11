@@ -30,12 +30,11 @@ services:
       - CONFIGS=0
       - CONTAINERS=1 # Traefik, portainer, etc.
       - DISTRIBUTION=0
-      # THIS IS WHY THE DOCKER BACKUP CONTAINER DOESN'T EXECUTE STUFF, FIX IT OR CREATE ANOTHER PROXY CONTAINER!
-      - EXEC=0
+      - EXEC=1 # docker volume backup
       - IMAGES=1 # Portainer
       - INFO=1 # Portainer
       - NETWORKS=1 # Portainer
-      - NODES=0
+      - NODES=1 # docker volume backup
       - PLUGINS=0
       - SERVICES=1 # Portainer
       - SESSION=0
