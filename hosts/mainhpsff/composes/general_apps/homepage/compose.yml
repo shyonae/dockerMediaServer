@@ -1,1 +1,21 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+    ports:
+      - 3045:3000
+    volumes:
+      - ${DOCKERCONFDIR}/homepage/config:/app/config 
+    networks:
+    -  generalStackNetwork
+    labels:
+        - docker-volume-backup.stop-during-backup=true
 
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true
