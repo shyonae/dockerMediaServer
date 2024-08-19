@@ -30,6 +30,7 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     networks:
       - swagStackNetwork
+      - musicStackNetwork
       - managementStackNetwork
       - arrStackNetwork
       - downloadStackNetwork
@@ -77,6 +78,9 @@ services:
 
 networks:
   swagStackNetwork:
+    driver: bridge
+    external: true
+  musicStackNetwork:
     driver: bridge
     external: true
   managementStackNetwork:

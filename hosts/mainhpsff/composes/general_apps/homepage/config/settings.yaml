@@ -31,7 +31,13 @@ layout:
     useEqualHeights: true
     style: row
     columns: 4
+    header: false
   T440p_1 Monitoring:
     useEqualHeights: true
     style: row
     columns: 4
+    header: false
+  Docker services:
+    style: row
+    columns: 4
+    header: false

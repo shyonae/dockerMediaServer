@@ -39,6 +39,7 @@ services:
     container_name: betanin
     ports:
       - 9393:9393
+      - 8337:8337
     environment:
       - PUID=${PUID}
       - PGID=${PGID}

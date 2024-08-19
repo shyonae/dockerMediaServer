@@ -17,24 +17,8 @@
     showSearchSuggestions: true # Optional, will show search suggestions. Defaults to false
     target: _blank # One of _self, _blank, _parent or _top
 
-- glances:
-    url: http://glances:61208
-    version: 4 
-    cpu: true 
-    mem: true 
-    cputemp: true
-    label: HP SFF 
-
-- glances:
-    url: http://192.168.1.8:61208
-    version: 4 
-    cpu: true 
-    mem: true 
-    cputemp: true 
-    label: T440P_1
-
 - datetime:
-    text_size: xl
+    text_size: m
     format:
       dateStyle: long
       timeStyle: long

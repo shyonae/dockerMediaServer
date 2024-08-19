@@ -1,0 +1,23 @@
+services:
+  myspeed:
+    image: germannewsmaker/myspeed:latest
+    container_name: myspeed
+    volumes:
+      - ${DOCKERCONFDIR}/myspeed:/myspeed/data
+    networks:
+      - generalStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "100m"
+    ports:
+      - 5216:5216
+    restart: unless-stopped
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true

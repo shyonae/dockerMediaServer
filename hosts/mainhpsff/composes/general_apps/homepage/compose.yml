@@ -15,6 +15,16 @@ services:
       HOMEPAGE_VAR_PBS_PASSWORD: ${HOMEPAGE_VAR_PBS_PASSWORD}
       HOMEPAGE_VAR_OVM_USERNAME: ${HOMEPAGE_VAR_OVM_USERNAME}
       HOMEPAGE_VAR_OVM_PASSWORD: ${HOMEPAGE_VAR_OVM_PASSWORD}
+      HOMEPAGE_VAR_NAVIDROME_TOKEN: ${HOMEPAGE_VAR_NAVIDROME_TOKEN}
+      HOMEPAGE_VAR_NAVIDROME_SALT: ${HOMEPAGE_VAR_NAVIDROME_SALT}
+      HOMEPAGE_VAR_LINKWARDEN_TOKEN: ${HOMEPAGE_VAR_LINKWARDEN_TOKEN}
+      HOMEPAGE_VAR_QBITTORRENT_PWD: ${HOMEPAGE_VAR_QBITTORRENT_PWD}
+      HOMEPAGE_VAR_BAZARR_KEY: ${HOMEPAGE_VAR_BAZARR_KEY}
+      HOMEPAGE_VAR_RADARR_KEY: ${HOMEPAGE_VAR_RADARR_KEY}
+      HOMEPAGE_VAR_SONARR_KEY: ${HOMEPAGE_VAR_SONARR_KEY}
+      HOMEPAGE_VAR_PROWLARR_KEY: ${HOMEPAGE_VAR_PROWLARR_KEY}
+      HOMEPAGE_VAR_JELLYFIN_KEY: ${HOMEPAGE_VAR_JELLYFIN_KEY}
+      HOMEPAGE_VAR_JELLYSEER_KEY: ${HOMEPAGE_VAR_JELLYSEER_KEY}
     ports:
       - 3045:3000
     volumes:
@@ -25,19 +35,43 @@ services:
       - ./images:/app/public/images
       - ${DOCKERCONFDIR}/homepage/config:/app/config 
     networks:
-      - generalStackNetwork
+      - swagStackNetwork
+      - musicStackNetwork
       - managementStackNetwork
+      - arrStackNetwork
+      - downloadStackNetwork
+      - generalStackNetwork
       - socketProxyNetwork
+      - guacamoleStackNetwork
+      - immichStackNetwork
     labels:
       - docker-volume-backup.stop-during-backup=true
 
 networks:
-  generalStackNetwork:
+  swagStackNetwork:
+    driver: bridge
+    external: true
+  musicStackNetwork:
     driver: bridge
     external: true
   managementStackNetwork:
     driver: bridge
     external: true
+  arrStackNetwork:
+    driver: bridge
+    external: true
+  downloadStackNetwork:
+    driver: bridge
+    external: true
+  generalStackNetwork:
+    driver: bridge
+    external: true
   socketProxyNetwork:
+    driver: bridge
+    external: true
+  guacamoleStackNetwork:
+    driver: bridge
+    external: true
+  immichStackNetwork:
     driver: bridge
     external: true

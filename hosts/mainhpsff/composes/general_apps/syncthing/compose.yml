@@ -12,6 +12,8 @@ services:
       - ${DOCKERBACKUPSDIR}/syncthing:/backups
     networks:
       - generalStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
     logging:
       driver: "json-file"
       options:
