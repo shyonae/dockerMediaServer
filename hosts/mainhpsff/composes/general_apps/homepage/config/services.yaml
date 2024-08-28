@@ -106,18 +106,15 @@
         widget:
             type: myspeed
             url: http://myspeed:5216
-    - navidrome:
-        icon: navidrome.png
-        description: music streaming
-        href: http://192.168.1.9:4533
-        server: hpsff-proxy
-        container: navidrome
+    - romm:
+        icon: romm.png
+        description: rom manager
+        href: http://192.168.1.8:5689
         widget:
-            type: navidrome
-            url: http://navidrome:4533
-            user: shyonae
-            token: "{{HOMEPAGE_VAR_NAVIDROME_TOKEN}}" # md5(password + salt)
-            salt: "{{HOMEPAGE_VAR_NAVIDROME_SALT}}"
+            type: romm
+            url: http://192.168.1.8:5689
+            username: "{{HOMEPAGE_VAR_ROMM_USER}}"
+            password: "{{HOMEPAGE_VAR_ROMM_PWD}}"
     - qbittorrent:
         icon: qbittorrent.png
         description: torrent client
@@ -129,14 +126,26 @@
             url: http://qbittorrent:8080
             username: shyonae
             password: "{{HOMEPAGE_VAR_QBITTORRENT_PWD}}"
-    - linkwarden:
-        icon: linkwarden.png
-        description: bookmarks
-        href: http://192.168.1.8:3007
-        # widget:
-        #     type: linkwarden
-        #     url: http://192.168.1.8:3007
-        #     key: "{{HOMEPAGE_VAR_LINKWARDEN_TOKEN}}" # idk why I can't copy the token
+    - immich:
+        icon: immich.png
+        description: photos
+        href: http://192.168.1.9:2283
+        server: hpsff-proxy
+        container: immich_server
+        widget:
+            type: immich
+            url: http://immich_server:3001
+            key: "{{HOMEPAGE_VAR_IMMICH_TOKEN}}"
+    - audiobookshelf:
+        icon: audiobookshelf.png
+        description: audiobooks / podcasts
+        href: http://192.168.1.9:13378
+        server: hpsff-proxy
+        container: audiobookshelf
+        widget:
+            type: audiobookshelf
+            url: http://audiobookshelf:80
+            key: "{{HOMEPAGE_VAR_AUDIOBOOKSHELF_KEY}}"
     - bazarr:
         icon: bazarr.png
         description: subtitles
@@ -170,6 +179,16 @@
             url: http://sonarr:8989
             username: shyonae
             key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
+    - readarr:
+        icon: readarr.png
+        description: books / audiobooks
+        href: http://192.168.1.9:8787
+        server: hpsff-proxy
+        container: readarr
+        widget:
+            type: readarr
+            url: http://readarr:8787
+            key: "{{HOMEPAGE_VAR_READARR_KEY}}"
     - prowlarr:
         icon: prowlarr.png
         description: index manager
@@ -206,6 +225,45 @@
             type: jellyseerr
             url: http://jellyseerr:5055
             key: "{{HOMEPAGE_VAR_JELLYSEER_KEY}}"
+    - navidrome:
+        icon: navidrome.png
+        description: music streaming
+        href: http://192.168.1.9:4533
+        server: hpsff-proxy
+        container: navidrome
+        widget:
+            type: navidrome
+            url: http://navidrome:4533
+            user: shyonae
+            token: "{{HOMEPAGE_VAR_NAVIDROME_TOKEN}}" # md5(password + salt)
+            salt: "{{HOMEPAGE_VAR_NAVIDROME_SALT}}"
+    - linkwarden:
+        icon: linkwarden.png
+        description: bookmarks
+        href: http://192.168.1.8:3007
+        # widget:
+        #     type: linkwarden
+        #     url: http://192.168.1.8:3007
+        #     key: "{{HOMEPAGE_VAR_LINKWARDEN_TOKEN}}" # idk why I can't copy the token
+    - homebox:
+        icon: homebox.png
+        description: storage
+        href: http://192.168.1.8:3100
+        widget:
+            type: homebox
+            url: http://192.168.1.8:3100
+            username: "{{HOMEPAGE_VAR_HOMEBOX_USER}}"
+            password: "{{HOMEPAGE_VAR_HOMEBOX_PWD}}"
+    - shoko-server:
+        icon: shoko.png
+        description: anime manager
+        href: http://192.168.1.8:8111
+    - firefly3:
+        icon: mdi-cash
+        description: finance manager
+        href: http://192.168.1.9:8007
+        server: hpsff-proxy
+        container: firefly_iii_app
     - notifiarr:
         icon: notifiarr.png
         description: TRaSH Guides updates for *arrs
@@ -218,6 +276,18 @@
         description: container management
         server: hpsff-proxy
         container: portainer
+    - syncthing:
+        icon: syncthing.png
+        description: file sync
+        href: http://192.168.1.9:21027
+        server: hpsff-proxy
+        container: syncthing
+    - wg-easy:
+        icon: wireguard.png
+        description: vpn
+        href: http://192.168.1.9:51820
+        server: hpsff-proxy
+        container: wg-easy
     - glances:
         icon: glances.png
         description: monitoring
@@ -230,11 +300,34 @@
         href: http://192.168.1.9:9393
         server: hpsff-proxy
         container: betanin
+    - betanin-move:
+        icon: beets.png
+        description: for deemix / tidarr downloads
+        href: http://192.168.1.9:9394
+        server: hpsff-proxy
+        container: betanin
+    - deemix:
+        icon: mdi-equalizer
+        description: deezer downloader
+        href: http://192.168.1.9:6595
+        server: hpsff-proxy
+        container: deemix
+    - tidarr:
+        icon: si-tidal
+        description: tidal downloader
+        href: http://192.168.1.9:8484
+        server: hpsff-proxy
+        container: tidarr
     - flaresolverr: 
         icon: flaresolverr.png
         description: proxy server for *arrs
         server: hpsff-proxy
         container: flaresolverr
+    - hoyolab-auto: 
+        icon: mdi-clipboard-check
+        description: daily check-in
+        server: hpsff-proxy
+        container: hoyolab-auto
     - unpackerr: 
         icon: mdi-package-variant
         description: download extractor
@@ -250,11 +343,37 @@
         description: Main reverse proxy
         server: hpsff-proxy
         container: swag
+    - swag_duckdns:
+        icon: linuxserver-io.png
+        description: reverse proxy for wireguard
+        server: hpsff-proxy
+        container: swag_duckdns
+    - immich_redis:
+        icon: redis.png
+        description: redis for immich
+        server: hpsff-proxy
+        container: immich_redis
+    - immich_postgres:
+        icon: postgres.png
+        description: postgres for immich
+        server: hpsff-proxy
+        container: immich_postgres
+    - linkwarden_database:
+        icon: postgres.png
+        description: db for linkwarden
+    - romm_database:
+        icon: mariadb.png
+        description: db for romm
     - crowdsec:
         icon: crowdsec.png
         description: blocklist for swag
         server: hpsff-proxy
         container: crowdsec
+    - duckdns:
+        icon: duckdns.png
+        description: dynamic dns for wireguard
+        server: hpsff-proxy
+        container: duckdns
     - authelia:
         icon: authelia.png
         description: authentication for swag
