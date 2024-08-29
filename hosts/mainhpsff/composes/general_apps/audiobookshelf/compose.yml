@@ -26,6 +26,7 @@ services:
       - 13378:80
     volumes:
       - ${DOCKERSTORAGEDIR}/medialibrary/books:/audiobooks
+      - ${DOCKERSTORAGEDIR}/medialibrary/podcasts:/podcasts
       - ${DOCKERCONFDIR}/audiobookshelf/config:/config
       - ${DOCKERCONFDIR}/audiobookshelf/metadata:/metadata
 

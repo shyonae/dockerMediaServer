@@ -1,0 +1,21 @@
+services:
+  it-tools:
+    image: corentinth/it-tools:latest
+    container_name: it-tools
+    restart: unless-stopped
+    networks:
+      - generalStackNetwork
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "2"
+        max-size: "100m"
+    ports:
+      - 8090:80
+
+networks:
+  generalStackNetwork:
+    driver: bridge
+    external: true
