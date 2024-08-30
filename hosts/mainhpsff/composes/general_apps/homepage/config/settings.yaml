@@ -37,6 +37,11 @@ layout:
     style: row
     columns: 4
     header: false
+  RD450 Monitoring:
+    useEqualHeights: true
+    style: row
+    columns: 4
+    header: false
   Docker services:
     style: row
     columns: 4

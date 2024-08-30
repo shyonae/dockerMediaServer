@@ -52,6 +52,32 @@
             version: 4 
             metric: process
 
+- RD450 Monitoring:
+    - CPU:
+        widget:
+            type: glances
+            url: http://192.168.1.6:61208
+            version: 4 
+            metric: cpu
+    - Memory:
+        widget:
+            type: glances
+            url: http://192.168.1.6:61208
+            version: 4 
+            metric: memory
+    - Network:
+        widget:
+            type: glances
+            url: http://192.168.1.6:61208
+            version: 4 
+            metric: network:eth0
+    - Process:
+        widget:
+            type: glances
+            url: http://192.168.1.6:61208
+            version: 4 
+            metric: process
+
 - Important stuff:
     - Proxmox:
         icon: proxmox.png
@@ -63,16 +89,16 @@
             url: https://proxmox.yabailocal.duckdns.org
             username: "{{HOMEPAGE_VAR_PROXMOX_USERNAME}}"
             password: "{{HOMEPAGE_VAR_PROXMOX_PASSWORD}}"
-    - Proxmox Backup Server:
-        icon: proxmox-light.png
-        href: https://pbs.yabailocal.duckdns.org
-        siteMonitor: https://pbs.yabailocal.duckdns.org
-        description: main PBS, running along main Proxmox
-        # widget:
-        #     type: proxmoxbackupserver
-        #     url: https://192.168.1.13:8007
-        #     username: "{{HOMEPAGE_VAR_PBS_USERNAME}}"
-        #     password: "{{HOMEPAGE_VAR_PBS_PASSWORD}}"
+    - Proxmox-RD450:
+        icon: proxmox.png
+        href: https://rd450-proxmox.yabailocal.duckdns.org
+        siteMonitor: https://rd450-proxmox.yabailocal.duckdns.org
+        description: thinkserver rd450 Proxmox server
+        widget:
+            type: proxmox
+            url: https://rd450-proxmox.yabailocal.duckdns.org
+            username: "{{HOMEPAGE_VAR_PROXMOX_USERNAME}}"
+            password: "{{HOMEPAGE_VAR_PROXMOX_PASSWORD}}"
     - YabaiMediaVault:
         icon: openmediavault.png
         href: https://omv.yabailocal.duckdns.org
@@ -94,7 +120,16 @@
             url: http://192.168.1.199:80
             username: "{{HOMEPAGE_VAR_USER}}"
             password: "{{HOMEPAGE_VAR_ADGUARD_PASSWORD}}"
-
+    - Proxmox Backup Server:
+        icon: proxmox-light.png
+        href: https://pbs.yabailocal.duckdns.org
+        siteMonitor: https://pbs.yabailocal.duckdns.org
+        description: main PBS, running along main Proxmox
+        # widget:
+        #     type: proxmoxbackupserver
+        #     url: https://192.168.1.13:8007
+        #     username: "{{HOMEPAGE_VAR_PBS_USERNAME}}"
+        #     password: "{{HOMEPAGE_VAR_PBS_PASSWORD}}"
 
 - Docker services:
     - myspeed:
@@ -110,7 +145,7 @@
         icon: romm.png
         description: rom manager
         href: https://romm.yabailocal.duckdns.org
-        server: t440p_1
+        server: rd450
         container: romm
         widget:
             type: romm
@@ -275,7 +310,7 @@
         icon: shoko.png
         description: anime manager
         href: https://shoko.yabailocal.duckdns.org
-        server: t440p_1
+        server: rd450
         container: shokoserver
     - firefly:
         icon: mdi-cash
@@ -293,7 +328,7 @@
         icon: stirling-pdf.png
         description: pdf tools
         href: https://s-pdf.yabailocal.duckdns.org
-        server: hpsff-proxy
+        server: rd450
         container: s-pdf
     - notifiarr:
         icon: notifiarr.png
@@ -330,6 +365,12 @@
         description: monitoring
         href: https://glances2.yabailocal.duckdns.org
         server: t440p_1
+        container: glances
+    - glances-rd450:
+        icon: glances.png
+        description: monitoring
+        href: https://glances3.yabailocal.duckdns.org
+        server: rd450
         container: glances
     - betanin:
         icon: beets.png
@@ -380,6 +421,11 @@
         description: docker socket proxy
         server: t440p_1
         container: dockerproxy
+    - dockerproxy-rd450:
+        icon: mdi-arrow-decision
+        description: docker socket proxy
+        server: rd450
+        container: dockerproxy
     - swag:
         icon: linuxserver-io.png
         description: Main reverse proxy
@@ -408,7 +454,7 @@
     - romm_database:
         icon: mariadb.png
         description: db for romm
-        server: t440p_1
+        server: rd450
         container: romm_db
     - crowdsec:
         icon: crowdsec.png
@@ -435,8 +481,18 @@
         description: update cloudflare tunnels for swag
         server: hpsff-proxy
         container: cloudflare-ddns
-    - docker-volume-backup:
+    - docker-volume-backup-hpsff:
         icon: si-docker
         description: backup specific containers to smb share
         server: hpsff-proxy
+        container: docker-volume-backup
+    - docker-volume-backup-t440p_1:
+        icon: si-docker
+        description: backup specific containers to smb share
+        server: t440p_1
+        container: docker-volume-backup
+    - docker-volume-backup-rd450:
+        icon: si-docker
+        description: backup specific containers to smb share
+        server: rd450
         container: docker-volume-backup
