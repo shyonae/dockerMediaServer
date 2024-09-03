@@ -24,11 +24,15 @@ services:
   jellyfin:
     container_name: jellyfin
     image: lscr.io/linuxserver/jellyfin:latest
+    group_add:
+      - 303 # getent group render | cut -d: -f3
     environment:
       <<: *environment
     <<: [*default_conf, *autheliaPlusBackup]
     ports:
       - 8096:8096
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128 # hardware accel
     volumes:
       - ${DOCKERCONFDIR}/jellyfin:/config
       - ${DOCKERSTORAGEDIR}/medialibrary:/data

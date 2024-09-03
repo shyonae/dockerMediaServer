@@ -36,17 +36,17 @@ services:
       - redis
       - database
 
-  # immich-machine-learning:
-  #   container_name: immich_machine_learning
-  #   image: ghcr.io/immich-app/immich-machine-learning:release-openvino
-  #   extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
-  #     file: hwaccel/hwaccel.ml.yml
-  #     service: openvino # set to one of [armnn, cuda, openvino, openvino-wsl] for accelerated inference - use the `-wsl` version for WSL2 where applicable
-  #   volumes:
-  #     - ${DOCKERCONFDIR}/immich/model-cache-data:/cache
-  #   environment:
-  #     <<: *environment
-  #   <<: *default_conf
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:release-cuda
+    extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/ml-hardware-acceleration
+      file: hwaccel/hwaccel.ml.yml
+      service: cuda # set to one of [armnn, cuda, openvino, openvino-wsl] for accelerated inference - use the `-wsl` version for WSL2 where applicable
+    volumes:
+      - ${DOCKERCONFDIR}/immich/model-cache-data:/cache
+    environment:
+      <<: *environment
+    <<: *default_conf
 
   redis:
     container_name: immich_redis

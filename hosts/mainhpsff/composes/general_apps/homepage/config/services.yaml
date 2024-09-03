@@ -171,7 +171,7 @@
         container: immich_server
         widget:
             type: immich
-            url: http://immich_server:3001
+            url: https://immich.yabailocal.duckdns.org
             key: "{{HOMEPAGE_VAR_IMMICH_TOKEN}}"
     - audiobookshelf:
         icon: audiobookshelf.png
@@ -330,6 +330,12 @@
         href: https://s-pdf.yabailocal.duckdns.org
         server: rd450
         container: s-pdf
+    - manyfold:
+        icon: manyfold.png
+        description: stl files for 3d printing
+        href: https://manyfold.yabailocal.duckdns.org
+        server: rd450
+        container: manyfold
     - notifiarr:
         icon: notifiarr.png
         description: TRaSH Guides updates for *arrs
@@ -439,12 +445,12 @@
     - immich_redis:
         icon: redis.png
         description: redis for immich
-        server: hpsff-proxy
+        server: rd450
         container: immich_redis
     - immich_postgres:
         icon: postgres.png
         description: postgres for immich
-        server: hpsff-proxy
+        server: rd450
         container: immich_postgres
     - linkwarden_database:
         icon: postgres.png
