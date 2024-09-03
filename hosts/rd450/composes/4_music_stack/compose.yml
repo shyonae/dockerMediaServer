@@ -1,0 +1,62 @@
+x-default-conf: &default_conf
+  restart: unless-stopped
+  networks:
+    - musicStackNetwork
+  labels:
+    - docker-volume-backup.stop-during-backup=true
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "2"
+      max-size: "100m"
+
+services:
+  # to import cuesheets (one file albums with .cue files with them) run these commands:
+  # (If downloaded from a tracker, copy the files to another folder first)
+  # $ nix-shell -p shntool flac cuetools glibc
+  # $ shnsplit -f *.cue -t "%n - %t" -o flac *.flac
+  # NOTE: if shnsplit breaks, try running this command and try again (this is for JAPANESE encoding): 
+  #   iconv -f Shift-JIS -t UTF-8//TRANSLIT *.cue -o reencoded_cuefile.cue
+  # $ cuetag *.cue *.flac
+  # then just use betanin-move to import the files
+
+  betanin:
+    image: sentriz/betanin:latest
+    container_name: betanin
+    # docker exec -it betanin pip install beets-xtractor beets-autofix beets-cue requests beautifulsoup4  # HOW TO EXECUTE THIS ON STARTUP?
+    ports:
+      - 9393:9393
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/betanin/data:/b/.local/share/betanin/
+      - ${DOCKERCONFDIR}/betanin/config:/b/.config/betanin/
+      - ${DOCKERCONFDIR}/betanin/beets:/b/.config/beets/
+      - ${DOCKERCONFDIR}/betanin/extractors/:/mnt/data/extractors/
+      - ${DOCKERSTORAGEDIR}:/storage
+
+  betanin-move:
+    image: sentriz/betanin:latest
+    container_name: betanin-move
+    # docker exec -it betanin pip install beets-xtractor beets-autofix beets-cue requests beautifulsoup4  # HOW TO EXECUTE THIS ON STARTUP?
+    ports:
+      - 9394:9393
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    <<: *default_conf
+    volumes:
+      - ${DOCKERCONFDIR}/betanin-move/data/betanin.db:/b/.local/share/betanin/betanin.db
+      - ${DOCKERCONFDIR}/betanin-move/config/:/b/.config/betanin/
+      - ${DOCKERCONFDIR}/betanin-move/beets/:/b/.config/beets/
+      - ${DOCKERCONFDIR}/betanin/extractors/:/mnt/data/extractors/
+      - ${DOCKERSTORAGEDIR}:/storage
+      - ${DOCKERCONFDIR}/betanin/beets/musiclibrary.blb:/b/.config/beets/musiclibrary.blb
+      - ${DOCKERCONFDIR}/betanin/data/betanin.db:/b/.local/share/betanin/betanin.db
+
+networks:
+  musicStackNetwork:
+    driver: bridge
+    external: true
