@@ -34,31 +34,6 @@ services:
       - ${DOCKERCONFDIR}/navidrome:/data
       - ${DOCKERSTORAGEDIR}/medialibrary/music:/music:ro
 
-  tidarr:
-    image: cstaelen/tidarr
-    container_name: 'tidarr'
-    ports:
-      - 8484:8484
-    <<: *default_conf
-    volumes:
-        - ${DOCKERCONFDIR}/tidarr/config:/home/app/standalone/shared
-        - ${DOCKERSTORAGEDIR}/downloads/tidarr/albums:/home/app/standalone/download/albums
-        - ${DOCKERSTORAGEDIR}/downloads/tidarr/tracks:/home/app/standalone/download/tracks
-        - ${DOCKERSTORAGEDIR}/downloads/tidarr/playlists:/home/app/standalone/download/playlists
-
-  deemix:
-    image: registry.gitlab.com/bockiii/deemix-docker
-    container_name: deemix
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-    <<: *default_conf
-    ports:
-      - 6595:6595
-    volumes:
-      - ${DOCKERCONFDIR}/deemix/config:/config
-      - ${DOCKERSTORAGEDIR}/downloads/deemix:/downloads
-
 networks:
   musicStackNetwork:
     driver: bridge
