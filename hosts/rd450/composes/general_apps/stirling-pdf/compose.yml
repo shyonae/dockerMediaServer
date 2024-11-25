@@ -1,6 +1,6 @@
 services:
   s-pdf:
-    image: frooodle/s-pdf:latest
+    image: stirlingtools/stirling-pdf:latest
     container_name: s-pdf
     restart: unless-stopped
     networks:
@@ -29,3 +29,4 @@ networks:
   generalStackNetwork:
     driver: bridge
     external: true
+
