@@ -2,7 +2,7 @@ services:
   shoko_server:
     shm_size: 256m
     container_name: shokoserver
-    image: shokoanime/server:daily
+    image: shokoanime/server:stable
     restart: unless-stopped
     environment:
       PUID: ${PUID}
