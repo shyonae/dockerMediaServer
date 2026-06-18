@@ -3,6 +3,10 @@ global:
   sendAnonymousUsage: false
 logs:
   level: DEBUG
+log:
+  filePath: "/tmp/log.txt"
+  format: json
+  level: DEBUG
 api:
   dashboard: true
   insecure: true
