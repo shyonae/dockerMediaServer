@@ -2,7 +2,7 @@ services:
   shoko_server:
     shm_size: 256m
     container_name: shokoserver
-    image: shokoanime/server:stable
+    image: ghcr.io/shokoanime/server:latest
     restart: unless-stopped
     environment:
       PUID: ${PUID}
@@ -12,7 +12,6 @@ services:
       - "8111:8111"
     networks:
       - generalStackNetwork
-      - jellyStackNetwork
     logging:
       driver: "json-file"
       options:
@@ -26,8 +25,5 @@ services:
 
 networks:
   generalStackNetwork:
-    driver: bridge
-    external: true
-  jellyStackNetwork:
     driver: bridge
     external: true

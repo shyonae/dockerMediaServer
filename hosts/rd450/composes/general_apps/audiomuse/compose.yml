@@ -43,6 +43,9 @@ services:
     ports:
       - "${FRONTEND_PORT:-8000}:8000" # Map host port 8000 to container port 8000
     environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      AI_MODEL_PROVIDER: "GEMINI"
+      GEMINI_MODEL_NAME: "gemini-2.5-flash"
       SERVICE_TYPE: "flask" # Tells the container to run the Flask app
       TZ: "${TZ:-UTC}"
       # DATABASE_URL is now constructed by config.py from the following:
@@ -64,6 +67,9 @@ services:
     <<: *default_conf
     container_name: audiomuse-ai-worker-instance
     environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      AI_MODEL_PROVIDER: "GEMINI"
+      GEMINI_MODEL_NAME: "gemini-2.5-flash"
       SERVICE_TYPE: "worker" # Tells the container to run the RQ worker
       TZ: "${TZ:-UTC}"
       # DATABASE_URL is now constructed by config.py from the following:
